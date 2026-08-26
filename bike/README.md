@@ -132,13 +132,49 @@ Watch the bias: what Commons photographs side-on is mostly folding bikes and Dut
 roadsters, so the queries ask for diamond frames explicitly. A pool of small-wheel folders
 would teach the checklist judge the wrong proportions.
 
+## Calibrating the judge: the ablation ladder
+
+```bash
+python3 ablate.py && python3 render.py out/ladder/*.js -o out/ladder
+python3 sheet.py out/ladder/*.png -o out/ladder.png --cols 4 --cell 300
+```
+
+The baseline is fifty piles of scribbles with no ground-truth ordering, so hand-ranking
+pairs from it is calibrating on coin flips. `ablate.py` breaks the reference bicycle in one
+specific way at a time instead, and each way is one item on the checklist:
+
+| rung | breaks |
+|---|---|
+| `00-gold` | nothing |
+| `no-spokes` | nothing structural — cosmetic control |
+| `no-chain` | chain connecting two rings |
+| `frame-open` | frame closed (down tube removed) |
+| `fork-detached` | bars joined to the front wheel |
+| `wheels-unequal` | wheels the same size |
+| `one-wheel` | two wheels, both drawn |
+| `scrambled` | every joint moved — bottom anchor |
+
+Rough tiers, best to worst: `gold` > `no-spokes` > {`no-chain`, `frame-open`,
+`fork-detached`} > {`wheels-unequal`, `one-wheel`} > `scrambled`. Any cross-tier pair has an
+answer that needs no human opinion, so a judge can be scored against it. **A judge that
+prefers unequal wheels is disqualified.** Within-tier pairs are genuinely ambiguous — use
+them to measure self-consistency, not correctness.
+
+Show every pair twice, with the images swapped. A judge that changes its mind when A and B
+trade places is measuring position, not bicycles.
+
+The tubes are drawn twice — fat marker paint, then ink over it — so an ablation has to
+remove both or the paint layer quietly puts the tube back. Every substitution asserts that
+it fired; a silent no-op would turn a rung into a duplicate of the gold.
+
 ## Layout
 
 ```
 prompt/         system.txt + user.txt — the fixed sketch prompt, as data
 generate.py     sample sketches from an OpenAI-compatible endpoint
 template.html   the harness: canvas, paper, seeds, error banner
-render.py       sketches -> PNGs, headless chrome
+render.py       sketches -> PNGs, headless chrome, runtime errors into .err
+ablate.py       the reference bicycle, broken one way at a time -> out/ladder/
 sheet.py        many images -> one contact sheet PNG (batch eyeballing)
 fetch_photos.py real bicycle photos from Wikimedia Commons -> photos/
 judge_photos.html  click-to-keep wireframe for building the 200-photo pool

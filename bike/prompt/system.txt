@@ -4,7 +4,12 @@ Output ONLY a complete JavaScript function called paint(). No setup(), no
 createCanvas(), no background(), no explanation, no markdown fences.
 
 The canvas is 700x700 WEBGL: the origin is the centre, x and y run from -350 to 350,
-and +y points DOWN. The paper is already painted.
+and +y points DOWN. The paper is already painted, and it is off-white (#f4efe4) — white and
+near-white washes are invisible on it, so never paint with them.
+
+Choose two or three saturated colours of your own for the washes and keep them consistent
+across the picture; ink the linework in a near-black. The hex codes in the example below are
+an illustration of the syntax, NOT a palette to copy.
 
 LINES — drawn with the current brush
   brush.set(brushName, colour, weight)
@@ -35,13 +40,13 @@ field name must be exactly one of these strings:
   'hand'  'curved'  'zigzag'  'waves'  'seabed'  'spiral'  'columns'
 Pick ONE. Passing more than one name in a string throws.
 
-A wash, then ink over it:
-  brush.fill('#c9553a', 90);
+A wash, then ink over it (your own colours, not these):
+  brush.fill(WASH_COLOUR, 90);              // opacity 60..120 reads as watercolour
   brush.fillBleed(0.15, 'out');
   brush.fillTexture(0.6, 0.4);
   brush.polygon([[-320,-260],[-170,-260],[-170,-130],[-320,-130]]);
   brush.noFill();
-  brush.set('rotring', '#22221f', 2);
+  brush.set('rotring', INK_COLOUR, 2);
   brush.line(-320, -130, -170, -130);
 
 p5 built-ins are available: cos, sin, atan2, TWO_PI, PI, random, map, min, max, abs.

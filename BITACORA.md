@@ -653,3 +653,54 @@ verbosity is not quality, and our length band should stay honest about that.
 **Next.** The judge. Two prompts to write (checklist and pairwise), one model to choose, and
 a calibration pass — rank 20 pairs by hand, check the judge agrees — before any of it is
 allowed near a reward.
+
+## 011 — 2026-08-26 — You cannot calibrate a judge on fifty piles of scribbles
+
+**Goal.** Work out how to validate a judge when the baseline contains zero bicycles.
+
+**The problem, in the user's words:** *"given we did not get anything that resembles a bike
+on the baseline, how we will calibrate the judge models?"* Ranking two baseline sketches by
+"which is more bicycle" is a coin flip, and a judge calibrated against coin flips is a judge
+we know nothing about.
+
+**Did.** Split the answer in two, because the two judge components have different problems.
+
+The **checklist** does not need bicycles. "Are there two wheels?", "are they the same size?"
+are factual questions with answers on a pile of scribbles — mostly 0 or 1 out of 5, which is
+exactly the partial credit that gives a garbage sketch something to climb. It can be
+calibrated directly on the baseline by answering the five binaries by hand on 20 renders and
+comparing.
+
+The **pairwise judge** needs ground truth, so we manufactured it. `bike/ablate.py` takes
+`gold/bike_01.js` and breaks it in one specific way at a time, each way being one checklist
+item: chain removed, down tube removed, fork detached from the front wheel, wheels unequal,
+one wheel missing, plus a cosmetic control (spokes removed, structure intact) and a bottom
+anchor (every joint moved). Eight rungs, all rendering clean.
+
+![the ablation ladder](bitacora-assets/ablation-ladder.png)
+
+**Why this beats hand-ranking.** A pair like (gold, wheels-unequal) has an answer that needs
+no opinion — one image is worse than the other in exactly one known respect. A judge that
+picks the unequal wheels is disqualified on the spot, and we learn that before spending
+anything on training. The ladder also stays useful as a regression test: rerun it whenever
+the judge model or its prompt changes.
+
+Two rules that came out of building it. Show every pair **twice with the images swapped** —
+a judge that changes its mind when A and B trade places is measuring position, not bicycles.
+And keep within-tier pairs (`no-chain` vs `frame-open`) out of the correctness score; they
+are genuinely ambiguous and only useful for measuring self-consistency.
+
+**Dead ends.**
+
+- The first ladder had two rungs that were not actually broken. `frame-open` and
+  `fork-detached` removed the tube from the ink linework, but the gold paints every tube
+  *twice* — a fat marker stroke first, ink over it — so the paint layer put the tube straight
+  back. Invisible in the code, obvious in the contact sheet. Both layers now get ablated.
+- Two `assert`s fired during development because the exact source strings had drifted since
+  the gold was repainted (`brush.circle(..., true)` had become `..., false)`). That is the
+  assert doing its job: a silent no-op substitution would have produced a "rung" that was a
+  byte-for-byte copy of the gold, and a judge scoring 100% on it would have looked like good
+  news.
+
+**Next.** Judge model choice, then: 20 baseline renders scored by hand against the checklist,
+and the ladder's cross-tier pairs run in both orders.
