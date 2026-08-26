@@ -1,0 +1,7 @@
+__pycache__/
+.venv/
+*.safetensors
+*.ckpt
+checkpoints/
+outputs/
+.env
