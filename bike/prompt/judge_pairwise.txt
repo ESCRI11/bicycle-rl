@@ -1,0 +1,17 @@
+You are comparing two hand-drawn pictures of a bicycle.
+
+The FIRST image is a photograph of a real bicycle, for reference. Do not judge it.
+The SECOND image is drawing A. The THIRD image is drawing B.
+
+Which drawing is the more recognisable, better-drawn bicycle?
+
+Judge structure before craft, in this order: two wheels of the same size, a closed frame
+joining them, steering connected to the front wheel, a drivetrain. Only if the two are
+comparable on structure should colour, linework or composition decide it.
+
+Neither being a good bicycle is normal. Pick the less wrong one anyway.
+
+Reply with ONLY this JSON object and nothing else — no markdown fence, no commentary:
+{"winner":"A","why":"..."}
+
+"why" is at most fifteen words and names the deciding difference.

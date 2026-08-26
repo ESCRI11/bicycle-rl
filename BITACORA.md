@@ -760,3 +760,58 @@ and one `endShape()` without `beginShape()`.
 **Next.** Judge marked as `google/gemini-2.5-flash` via OpenRouter, provisional. Then
 calibration: 20 baseline renders scored by hand against the five checklist items, and the
 ladder's cross-tier pairs run in both orders.
+
+## 013 — 2026-08-26 — The judge is now the weakest link
+
+**Goal.** Build the judge and find out whether it can be trusted, before any of it reaches a
+reward.
+
+**Did.** Three new pieces, all zero-dependency:
+
+- `prompt/judge_checklist.txt` — five structural questions about one drawing, graded against
+  a reference photograph, returning JSON with a boolean and a twelve-word reason each.
+- `prompt/judge_pairwise.txt` — two drawings and a photograph, pick the better bicycle.
+- `judge.py` (OpenRouter, images as base64 data URLs, model pinned in `JUDGE_MODEL`) and
+  `calibrate.py`, which runs the ablation ladder and reports three numbers.
+
+**Numbers.** Same ladder, same prompts, one run each:
+
+| | `gemini-2.5-flash` | `claude-sonnet-5` |
+|---|---|---|
+| per-item detection | **4/5** | 2/5 |
+| pair ordering | 31/48 (65%) | **36/48 (75%)** |
+| pair ordering, excluding `scrambled` | 24/34 (71%) | **28/34 (82%)** |
+| position flips | 15/24 (63%) | **6/24 (25%)** |
+
+Gemini's failure mode is stark: it picks whichever drawing is labelled **A**, whatever is in
+it. Sonnet is better on ordering and much better on position, but misses individual broken
+items more often. Neither is good. **The judge is currently the weakest link in the
+pipeline** — shipping either into a reward at 0.60 weight would be training against noise.
+
+**Dead ends and corrections.**
+
+- **Interleaving the image labels made pairwise worse, not better.** Three bare images in a
+  row had Gemini telling us two visibly different drawings were "identical", so we captioned
+  each image with its own text block. Checklist accuracy improved; pairwise position bias
+  went from 7/24 flips to 15/24. Naming a drawing "A" apparently makes A more attractive.
+  Kept the labels for the checklist, where they help, and noted the pairwise cost.
+- **A 400 from Anthropic that Gemini never raised**: one photo in the pool is a PNG named
+  `.jpg`, and Anthropic rejects a mismatched media type. `data_url` now sniffs the magic
+  bytes instead of trusting the extension. Worth remembering — a judge swap surfaced a data
+  bug that had been sitting there silently.
+- **Our ground truth was over-claiming on one rung.** Sonnet kept *preferring* `scrambled`,
+  and on inspection it is not wrong: the scrambled bicycle still has two equal wheels and
+  connected members, so it passes the five checklist facts and only fails globally. Pairs
+  against it test coherence, which the checklist cannot see. `calibrate.py` now reports
+  accuracy with and without it. When the judge disagrees with the ground truth, sometimes the
+  ground truth is what is broken.
+- **Run-to-run variance is large.** Sonnet's item detection came out 3/5, 3/5 and 2/5 across
+  three runs; position flips 3, 6, 6. Eight rungs and twenty-four pairs is a small sample and
+  the error bars are wide enough to matter.
+- **Some rungs are too subtle.** `fork-detached` moves the fork fourteen pixels; a human
+  might miss it too. If the ladder is meant to test whether a judge can see a broken bicycle,
+  the breakages should be unmissable.
+
+**Next.** Three cheap experiments before locking a judge, roughly an hour and a dollar:
+reasoning-first prompts (describe both drawings, then decide), scoring a pair only when both
+orderings agree, and a blunter, larger ladder.

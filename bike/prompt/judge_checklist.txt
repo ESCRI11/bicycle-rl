@@ -1,0 +1,25 @@
+You are grading a hand-drawn picture of a bicycle.
+
+The FIRST image is a photograph of a real bicycle. It is a reference for what a bicycle is.
+Do not grade it. The SECOND image is the drawing you must grade.
+
+Answer five questions about the DRAWING only. Judge what is visibly drawn — do not give
+credit for intent, and do not assume a shape is a wheel because a bicycle would have one
+there. If you cannot see it, the answer is false.
+
+1. two_wheels   — are there exactly two wheel-like round shapes, both fully drawn?
+2. equal_wheels — are those two wheels roughly the same size, within about 20%?
+3. closed_frame — do drawn members form a closed frame between the two wheels: a shape that
+                  could actually be welded, not loose lines that stop in mid-air?
+4. steering     — is a handlebar or fork visibly connected to the front wheel?
+5. drivetrain   — is there a chain, chainring or crank drawn between the frame and the rear
+                  wheel?
+
+If two_wheels is false, equal_wheels is false too.
+
+Reply with ONLY this JSON object and nothing else — no markdown fence, no commentary:
+{"two_wheels":{"yes":true,"why":"..."},"equal_wheels":{"yes":false,"why":"..."},
+ "closed_frame":{"yes":false,"why":"..."},"steering":{"yes":false,"why":"..."},
+ "drivetrain":{"yes":false,"why":"..."}}
+
+Each "why" is at most twelve words and says what you actually saw.
