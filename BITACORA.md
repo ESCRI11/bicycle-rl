@@ -533,3 +533,123 @@ samples averaged per candidate to keep the noise down, 200 metric calls ≈ 800 
 
 **Next.** Run the baseline: `generate.py -n 50` → `render.py` → `sheet.py`. Needs an
 endpoint serving Qwen2.5-Coder-7B-Instruct.
+
+## 009 — 2026-08-26 — First baseline: 50 bicycles, none of them bicycles, and half the failures were ours
+
+**Goal.** Run the first batch. Find out what a 7B knows about drawing a bicycle from memory.
+
+**Did.** Pulled `qwen2.5-coder:7b` into ollama and generated 50 sketches through
+`generate.py` against `http://localhost:11434/v1`. This machine has no CUDA — an AMD 890M
+iGPU that WSL cannot use for compute — so it ran on 24 CPU cores at roughly 40 s a sketch.
+Rendered the batch, tiled it, looked at it.
+
+**Numbers — baseline v1.**
+
+| | |
+|---|---|
+| generated | 50 |
+| survive `node --check` | 49 |
+| **render without throwing** | **24** |
+| recognisable bicycles | **0** |
+| call a p5.brush method that does not exist | 7 (`noWiggle` ×4, `strokeCap`, `moveTo`, `curveVertex`) |
+| reach past the allowlist to real methods | 9 (`rect`, `noFill`, `noStroke`, `beginShape`/`vertex`/`endShape`) |
+| code length | 299 / 737 / 1684 chars (min / median / max) |
+
+![baseline v1: 50 samples, no bicycles](bitacora-assets/baseline-v1.png)
+
+The sheet is mostly blank paper with red error banners, plus rectangles, chevrons and
+spoke-bursts. The closest two attempts manage two circles and a box. Sample failure, first
+one we looked at:
+
+```js
+brush.spline([[300, 100], [350, 50], [400, 100], [350, 150]], 0.3);   // "wheel"
+```
+
+An open spline at x = 400, off a canvas that ends at 350.
+
+**Dead ends — and the big one is ours.**
+
+- **Twenty of the twenty-six failures were caused by our own prompt.** The error histogram,
+  once we could read it: 16 × `Brush "2B HB" not found`, plus `2HB`, `2BHB`, `2B HB 2H`. The
+  system prompt listed brush names space-separated — `brushName: 2B HB 2H cpencil pen ...` —
+  and the model passed the entire line as one string. It was also wrong on the facts: the
+  library has `pastel` and `crayon`, which we omitted, and no `marker2`, which we invented.
+  A baseline measured against a lying prompt measures the prompt. Fixed: one quoted string
+  per name, and an explicit "pick ONE". Field names verified against the bundle this time
+  instead of trusted from a README.
+- Only **5** failures were genuine hallucination, and `noWiggle` (3 of them) is a fair guess
+  — we grant `wiggle` and never say how to stop it.
+
+**Also did.** `render.py` now captures runtime errors: chrome takes `--dump-dom` alongside
+`--screenshot`, the harness paints errors into a `#fail` div, and the renderer pulls the text
+back out into a `.err` file next to each PNG. The reward's compile gate needs exactly this,
+and it turned an unreadable wall of red banners into a histogram in one pass.
+
+**Then the target changed slightly.** The user, on seeing v1: *"i see you just use pencil, i
+actually want to use the p5.brush package to sort of do drawings of it, like paint drawing"*.
+Fair — the allowlist was eight line-drawing calls, so line drawings are all it could produce.
+p5.brush's whole point is paint.
+
+Before writing a single new symbol into the prompt we rendered a probe sketch exercising
+every candidate: `fill` + `fillBleed` + `fillTexture` on a polygon, a filled circle, `hatch`
++ `hatchStyle` on a rect, `beginShape`/`vertex`/`endShape`, and one stroke from each of the
+eleven brushes. All of it works, and the eleven brushes are visibly distinct. **Verify, then
+promise** — the twenty brush-name failures were the tuition for that lesson.
+
+The prompt now has three sections — LINES, PAINT, TEXTURE — with the crucial rule that fill
+and hatch are *state set before a shape* and never affect `brush.line`, plus a five-line
+worked example of a wash with ink over it. The user prompt asks for "loose watercolour washes
+with ink linework drawn over them".
+
+`gold/bike_01.js` repainted to match: pale blue paint along the tubes, warm washes at saddle
+and bars, a hatched ground shadow, ink over the top.
+
+![the repainted reference](bitacora-assets/bike-reference-painted.png)
+
+One gotcha found while repainting, worth keeping: **a shape's outline is stroked with the
+current brush.** Draw the ground shadow polygon right after `brush.set('marker', teal, 11)`
+and the shadow gets a fat teal border. Drop back to a fine pale brush before any shape whose
+outline should not shout.
+
+**Next.** Baseline v2 with the painting prompt is running — same 50 samples, and the
+interesting number is whether the render-clean rate moves off 48%.
+
+## 010 — 2026-08-26 — Baseline v2: the prompt stopped lying, the model still cannot draw a bicycle
+
+**Goal.** Re-measure with the corrected, painterly prompt. Establish the real "from memory"
+number that everything after this is compared against.
+
+**Numbers — v1 → v2**, same model, same 50 samples, same seeds:
+
+| | v1 (line-drawing prompt, wrong brush list) | v2 (painting prompt, verified API) |
+|---|---|---|
+| survive `node --check` | 49 | 48 |
+| **render without throwing** | **24 (48%)** | **32 (64%)** |
+| **recognisable bicycles** | **0** | **0** |
+| failures caused by our prompt | 20 | 0 |
+| use `brush.fill` | — | 48 |
+| use `hatch` | — | 11 |
+| code length min/median/max | 299 / 737 / 1684 | 357 / 1020 / 3162 |
+
+![baseline v2](bitacora-assets/baseline-v2.png)
+
+Sixteen points of render rate came from fixing our own brush list. What remains is the
+model's own, and it is a much healthier error profile — no repeated systematic bug, just a
+spread of plausible guesses at an API that does not exist: `noWiggle` ×4, `rotate`,
+`ellipse`, `brushStyle`, `bg`, a brush called `'scetch'`, and one sketch that called
+`brush(...)` as if it were a function.
+
+The paint instruction landed: 48 of 50 call `brush.fill`, 11 hatch something. What did not
+land is anything resembling composition. The sheet is circles that never pair up, spoke
+bursts, dark blobs, and lone chevrons. Two wheels of equal size on a common baseline —
+the first item on our checklist — appears in roughly three of fifty.
+
+**This is the number the project exists to move: 0 out of 50.**
+
+Median code also grew 737 → 1020 chars once paint was on the table. Worth watching against
+the post's finding that its trained model *compressed* from 13,500 tokens to under 2,000:
+verbosity is not quality, and our length band should stay honest about that.
+
+**Next.** The judge. Two prompts to write (checklist and pairwise), one model to choose, and
+a calibration pass — rank 20 pairs by hand, check the judge agrees — before any of it is
+allowed near a reward.

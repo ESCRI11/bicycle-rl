@@ -10,6 +10,34 @@ function paint() {
   brush.noField();
   brush.wiggle(0.03);
 
+  // washes go down first and the ink goes over them
+  brush.fillTexture(0.55, 0.35);
+  brush.fillBleed(0.14, 'out');
+  brush.fill('#7a6a5f', 52);                         // tyres, soft discs under the rims
+  brush.circle(-150, 120, 100, true);
+  brush.circle(150, 120, 100, true);
+  brush.fill('#c9553a', 60);                         // saddle and bar tape
+  brush.circle(-78, -66, 26, true);
+  brush.circle(150, -46, 24, true);
+  brush.noFill();
+
+  // paint the tubes themselves rather than filling the triangle: a flat polygon reads as
+  // a solid panel, a fat marker stroke along each tube reads as paint
+  brush.set('marker', '#7fb2c9', 6);
+  for (const [a, b] of [[[-78, -60], [-20, 112]], [[-20, 112], [138, 18]],
+                        [[-78, -60], [112, -52]], [[-20, 112], [-150, 120]],
+                        [[-78, -60], [-150, 120]], [[138, 18], [150, 120]]]) {
+    brush.line(a[0], a[1], b[0], b[1]);
+  }
+
+  // the polygon's own outline is stroked with the CURRENT brush, so drop back to a fine
+  // pale one first or the ground shadow gets a fat coloured border
+  brush.set('2H', '#b9b0a4', 1);
+  brush.hatchStyle('2H', '#8d8477', 1);              // ground shadow
+  brush.hatch(9, 0.15);
+  brush.polygon([[-236, 232], [240, 232], [204, 248], [-202, 248]]);
+  brush.noHatch();
+
   // wheels
   brush.set('rotring', '#22221f', 1.4);
   for (const [hx, hy] of [rear, front]) {
