@@ -29,6 +29,8 @@ RUNGS = {
     "fork-detached":  (2, "steering"),
     "wheels-unequal": (1, "equal_wheels"),
     "one-wheel":      (1, "two_wheels"),
+    "three-wheels":   (1, "two_wheels"),
+    "no-frame":       (0, "closed_frame"),
     "scrambled":      (0, None),            # bottom anchor, everything wrong
 }
 
@@ -74,11 +76,12 @@ def main():
         return pair, fwd, rev
 
     right = flips = right_struct = n_struct = 0
-    wrong = []
+    wrong, verdicts = [], []
     for (x, y), fwd, rev in pool.map(both_ways, pairs):
         better = x if RUNGS[x][0] > RUNGS[y][0] else y
         got_fwd = x if fwd.get("winner") == "A" else y
         got_rev = y if rev.get("winner") == "A" else x
+        verdicts.append((better, got_fwd, got_rev))
         right += (got_fwd == better) + (got_rev == better)
         flips += got_fwd != got_rev
         # scrambled keeps every checklist fact (two equal wheels, connected members) and only
@@ -91,10 +94,17 @@ def main():
                          f"  ({fwd.get('why','')})")
     report["pair_accuracy"] = f"{right}/{len(pairs) * 2}"
     report["position_flips"] = f"{flips}/{len(pairs)}"
+    decisive = [p for p in verdicts if p[1] == p[2]]        # both orders agreed
+    dec_right = sum(1 for better, f, _ in decisive if f == better)
     report["pair_accuracy_structural"] = f"{right_struct}/{n_struct}"
+    report["decisive"] = f"{len(decisive)}/{len(pairs)}"
+    report["decisive_accuracy"] = f"{dec_right}/{len(decisive)}" if decisive else "n/a"
     print(f"  correct              {right}/{len(pairs) * 2}")
     print(f"  correct, no scrambled {right_struct}/{n_struct}")
     print(f"  position flips {flips}/{len(pairs)}   (same pair, different answer when swapped)")
+    print(f"  decisive       {len(decisive)}/{len(pairs)} pairs agreed both ways, "
+          f"{dec_right}/{len(decisive)} of those correct"
+          if decisive else "  decisive: none")
     for w in wrong[:8]:
         print(f"    x {w}")
 

@@ -39,6 +39,17 @@ FRAME = """  for (const [a, b] of [[St, BB], [BB, Hb], [St, Ht], [BB, rear], [St
 # to remove BOTH or the paint layer quietly puts the tube back.
 PAINT_DOWNTUBE = " [[-20, 112], [138, 18]],"
 PAINT_FORK = ", [[138, 18], [150, 120]]"
+FRAME_LOOP = """  for (const [a, b] of [[St, BB], [BB, Hb], [St, Ht], [BB, rear], [St, rear],
+                        [Hb, front], [Ht, Hb]]) {
+    brush.line(a[0], a[1], b[0], b[1]);
+  }
+"""
+PAINT_LOOP = """  for (const [a, b] of [[[-78, -60], [-20, 112]], [[-20, 112], [138, 18]],
+                        [[-78, -60], [112, -52]], [[-20, 112], [-150, 120]],
+                        [[-78, -60], [-150, 120]], [[138, 18], [150, 120]]]) {
+    brush.line(a[0], a[1], b[0], b[1]);
+  }
+"""
 CHAIN = """  brush.circle(BB[0], BB[1], 26, false);
   brush.circle(rear[0], rear[1], 12, false);          // sprocket
   brush.line(rear[0], rear[1] - 12, BB[0], BB[1] - 26);
@@ -62,7 +73,9 @@ ABLATIONS = {
         (PAINT_DOWNTUBE, ""),                              # and none in paint
     ]),
     "fork-detached": ("bars joined to the front wheel", [
-        (FRAME, FRAME.replace("[Hb, front]", "[Hb, [Hb[0] + 14, Hb[1] + 34]]")),
+        # a 14px gap is subtle enough that a human would miss it too. Remove the fork
+        # entirely: the front wheel floats, unattached to anything.
+        (FRAME, FRAME.replace("[Hb, front], ", "")),
         (PAINT_FORK, ""),
     ]),
     "no-chain": ("chain connecting two rings", [
@@ -70,6 +83,13 @@ ABLATIONS = {
     ]),
     "no-spokes": ("(cosmetic control — structure intact)", [
         (SPOKES, ""),
+    ]),
+    "no-frame": ("frame closed — there is no frame at all", [
+        (FRAME_LOOP, ""),
+        (PAINT_LOOP, ""),
+    ]),
+    "three-wheels": ("two wheels — there are three", [
+        (WHEELS, WHEELS.replace("of [rear, front]", "of [rear, front, [0, -140]]")),
     ]),
     "scrambled": ("(bottom anchor — every joint moved)", [
         ("const BB = [-20, 112];", "const BB = [70, 40];"),

@@ -11,7 +11,12 @@ comparable on structure should colour, linework or composition decide it.
 
 Neither being a good bicycle is normal. Pick the less wrong one anyway.
 
-Reply with ONLY this JSON object and nothing else — no markdown fence, no commentary:
-{"winner":"A","why":"..."}
+Which drawing came first is arbitrary and carries no information. Describe what each one
+actually contains before you decide.
 
-"why" is at most fifteen words and names the deciding difference.
+Reply with ONLY this JSON object and nothing else — no markdown fence, no commentary:
+{"a_has":"...","b_has":"...","winner":"A","why":"..."}
+
+"a_has" and "b_has" are at most fifteen words each and say what structure that drawing
+actually has: how many wheels, whether they match, whether the frame closes, what connects
+to the front wheel. "why" is at most twelve words and names the deciding difference.

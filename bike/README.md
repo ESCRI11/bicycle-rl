@@ -134,15 +134,26 @@ would teach the checklist judge the wrong proportions.
 
 ## The judge
 
-**`google/gemini-2.5-flash` via OpenRouter** — provisional, pending calibration.
-$0.30/M in, $2.50/M out; at group size 8 over 1,000 steps that is roughly $19 for the whole
-run, so price is not the constraint here — latency and agreement with us are. Pin the exact
-model id in the judge config: a floating alias that updates mid-run makes the reward
-non-stationary, and the training curve then stitches two different reward functions together
-with no way to see it in the plot.
+Calibrated on the ablation ladder (below), not chosen on price.
 
-If it fails calibration, the ladder up is `claude-sonnet-5`; the ladder down, if it passes
-easily, is `gemini-2.5-flash-lite` at a third the price.
+- **Pairwise: `anthropic/claude-sonnet-5`.** Same structural accuracy as Gemini (53/60) but
+  far steadier: 3/38 position flips against 11/38, and 35 of 38 pairs decisive against 27.
+  With the consensus rule that matters — Gemini discards nearly a third of its comparisons
+  as ties.
+- **Checklist: both models, AND-ed.** Their blind spots are complementary and systematic,
+  0/3 or 3/3 across three runs with nothing in between: **Gemini cannot count wheels**
+  (misses `one-wheel` 0/3, `three-wheels` 1/3), **Sonnet cannot see an open frame or a size
+  mismatch** (`frame-open` 0/3, `wheels-unequal` 0/3). An item counts as satisfied only if
+  both models say yes, which costs one extra cheap call per image and makes the checklist
+  hard to fool.
+
+**Score a pair only when both orderings agree.** Every pairwise comparison runs twice with A
+and B swapped; disagreement is a tie, not a coin flip. This is the difference between a
+reward and a random number generator.
+
+Pin the exact model ids. A floating alias that updates mid-run makes the reward
+non-stationary, and the training curve then stitches two reward functions together with no
+way to see it in the plot.
 
 ## Calibrating the judge: the ablation ladder
 

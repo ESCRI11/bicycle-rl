@@ -815,3 +815,67 @@ pipeline** — shipping either into a reward at 0.60 weight would be training ag
 **Next.** Three cheap experiments before locking a judge, roughly an hour and a dollar:
 reasoning-first prompts (describe both drawings, then decide), scoring a pair only when both
 orderings agree, and a blunter, larger ladder.
+
+## 014 — 2026-08-26 — Two judges, two different blind spots
+
+**Goal.** Decide the judge, for under three dollars.
+
+**Did.** Three changes, then re-ran the ladder against both candidates.
+
+1. **A blunter ladder.** `fork-detached` used to move the fork fourteen pixels, which a human
+   would miss too; now the fork is gone entirely and the front wheel floats. Added two rungs
+   that cannot be missed: `no-frame` (wheels and handlebars, nothing joining them) and
+   `three-wheels`. Ten rungs, 38 cross-tier pairs.
+2. **Reasoning-first pairwise prompt.** The judge now has to write what each drawing actually
+   contains — wheel count, whether they match, whether the frame closes — before naming a
+   winner, and is told the order carries no information.
+3. **Consensus scoring.** Every pair runs both ways; a pair only counts when both orders
+   agree. Disagreement is a tie, not a coin flip.
+
+![the blunter ladder](bitacora-assets/ablation-ladder-v2.png)
+
+**Numbers.**
+
+| | `gemini-2.5-flash` | `claude-sonnet-5` |
+|---|---|---|
+| pair ordering | 57/76 | **63/76** |
+| ordering, excl. `scrambled` | 53/60 (88%) | 53/60 (88%) |
+| position flips | 11/38 (29%) | **3/38 (8%)** |
+| pairs decisive (both orders agree) | 27/38 (71%) | **35/38 (92%)** |
+| accuracy on decisive pairs | 23/27 (85%) | 30/35 (86%) |
+
+Gemini's structural accuracy went 71% → 88% and its position flips 63% → 29% with the new
+prompt and ladder. Two variables moved at once, so that is not a clean attribution — but the
+question was which judge to use, not which change did it.
+
+**The finding.** Checklist detection run three times per model, and every single number is
+0/3 or 3/3 — no noise, pure systematic blindness, and the blind spots do not overlap:
+
+| broken item | gemini | sonnet |
+|---|---|---|
+| `one-wheel` (count) | **0/3** | 3/3 |
+| `three-wheels` (count) | **1/3** | 3/3 |
+| `wheels-unequal` (size) | 3/3 | **0/3** |
+| `frame-open` (open frame) | 3/3 | **0/3** |
+| fork-detached, no-chain, no-frame | 3/3 | 3/3 |
+
+**Gemini cannot count wheels. Sonnet cannot see an open frame or a size mismatch.** Either
+one alone, at 0.30 weight in the reward, would have taught the model that a bicycle with one
+wheel is fine, or that unequal wheels are fine — silently, and we would have read the
+training curve as progress.
+
+**Decision.** Pairwise goes to Sonnet, on consistency: same accuracy, a third of the position
+bias, and 92% of pairs decisive against 71%, which is what the consensus rule actually
+spends. The checklist runs on **both** models with an item counting only if both say yes.
+One extra cheap call per image, and a checklist that neither model's blind spot can walk
+through.
+
+**Numbers on cost.** The whole calibration — six full ladder runs and six checklist repeats,
+roughly 500 vision calls — came to **$0.58** against a $3 budget. For training, the
+double-checklist plus two-way pairwise works out around $0.09 a step, so ~$90 for a thousand
+steps. Worth knowing before it starts, not after.
+
+**Next.** Assemble the reward: compile gate, length band, AND-ed checklist, consensus
+pairwise. Then run it over the 50 baseline renders to see the score distribution — if it
+comes out all-zero, the reward has no gradient to give and something has to change before
+GEPA or GRPO.
