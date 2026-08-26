@@ -70,8 +70,19 @@ always produces the same image — no lucky-seed noise in the reward.
 
 ## The reward
 
-Four components, same shape as the post, with the aesthetic scorer swapped for structure —
-a bicycle is judged on facts before taste.
+`reward.py` scores a rendered batch. Four components, same shape as the post, with the
+aesthetic scorer swapped for structure — a bicycle is judged on facts before taste.
+
+```bash
+python3 reward.py out/baseline -k 2      # -k = pairwise opponents per sketch
+```
+
+A sketch that does not render scores the length component only and is never sent to a judge:
+there is nothing to look at, and judge calls are the expensive part. Length is measured on
+code with comments and blank lines stripped — the band exists to stop collapse to one line
+and to stop padding, and a well-commented sketch is neither. The bounds (300–2800) are set
+so the gold reference sits inside at 1.0; a reward that marks down its own reference is
+measuring the wrong thing.
 
 | weight | signal | how |
 |---|---|---|

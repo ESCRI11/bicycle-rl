@@ -879,3 +879,66 @@ steps. Worth knowing before it starts, not after.
 pairwise. Then run it over the 50 baseline renders to see the score distribution — if it
 comes out all-zero, the reward has no gradient to give and something has to change before
 GEPA or GRPO.
+
+## 015 — 2026-08-26 — The reward, assembled and pointed at the baseline
+
+**Goal.** Put the four components together and find out whether the thing has a gradient to
+give.
+
+**Did.** `bike/reward.py`:
+
+| weight | component | how |
+|---|---|---|
+| 0.05 | renders at all | `node --check` passed, a PNG exists, nothing thrown |
+| 0.05 | length band | 300–2800 chars of *code* — comments and blank lines stripped |
+| 0.30 | structural checklist | both judges, AND-ed per item |
+| 0.60 | pairwise win rate | consensus over both orderings, opponents from the same batch |
+
+A sketch that does not render is never sent to a judge. There is nothing to look at, and
+judge calls are the expensive part.
+
+**Numbers — the reward over the 50 baseline sketches:**
+
+```
+  reward   min 0.039  median 0.100  max 0.820
+  non-zero 50/50   distinct values 11
+  gate       mean 0.640  max 1.000
+  length     mean 0.985  max 1.000
+  checklist  mean 0.036  max 0.400
+  pairwise   mean 0.280  max 1.000
+```
+
+**And the sanity check that matters:** drop the gold reference into a batch with five
+baseline sketches and it comes out top at **0.940**, against 0.520 for the next best. The
+reward prefers the bicycle. That is not a given — a reward can rank correctly at the top and
+be noise at the bottom, or the reverse.
+
+**What the distribution says.**
+
+- **The checklist is nearly flat at zero** — mean 0.036, which is 0.18 of five items across
+  the batch. The promise in entry 011 was that the checklist would supply dense gradient at
+  the bottom where pairwise cannot. On this baseline it does not: almost nothing satisfies
+  even one item. It will start paying as soon as two equal circles appear.
+- **The early gradient is the gate.** Mean 0.64, and it is the switch that unlocks the other
+  0.90 of the reward. The first thing this model will learn is to stop throwing exceptions,
+  which is a real and useful objective — 64% → 100% render rate is worth more than its 0.05
+  weight suggests.
+- **Eleven distinct values across fifty sketches** is coarse for GRPO, which normalises
+  advantages inside a group of eight. Groups will contain ties, and a tie contributes no
+  gradient. More pairwise opponents (`-k 3`) buys finer granularity at three times the
+  judge cost; worth revisiting if training stalls early.
+
+**Watch for:** the cheapest way to win the checklist's first item and beat a weak opponent is
+to draw two big circles. If the model discovers that in the first hundred steps, that is not
+reward hacking — it is exactly the first rung of the ladder we built — but it is worth
+recognising it as such and not celebrating it as a bicycle.
+
+**Fixed on the way.** The band initially ran to 2600 raw characters, which scored the gold
+reference 0.66 on length. A reward that marks down its own reference is measuring the wrong
+thing. Length is now computed on comment-stripped code with bounds that put the gold at 1.0.
+
+**Numbers on cost.** The full run — 50 sketches scored, plus the sanity batch — spent $1.33.
+Calibration and reward assembly together: **$1.33 of the $3 budget**, with $1.67 left.
+
+**Next.** GEPA on the sketch prompt, scored by compile-gate + checklist. Then GRPO, which
+needs the rented GPU.
