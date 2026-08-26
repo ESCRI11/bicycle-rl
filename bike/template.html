@@ -1,0 +1,31 @@
+<!doctype html>
+<meta charset="utf-8">
+<title>bike</title>
+<style>
+  html, body { margin:0; background:#f4efe4 }
+  #fail { position:absolute; top:0; left:0; right:0; padding:8px 12px; background:#c0392b;
+          color:#fff; font:14px/1.4 ui-monospace,monospace; white-space:pre-wrap }
+</style>
+<script src="lib/p5.min.js"></script>
+<script src="lib/p5.brush.js"></script>
+<script>
+// The harness owns the canvas, the paper and the seeds. The model writes paint() and
+// nothing else — fewer ways to fail on boilerplate, and every render is comparable.
+function setup() {
+  createCanvas(700, 700, WEBGL);
+  brush.load();
+  brush.scaleBrushes(2);
+  randomSeed(7); noiseSeed(7); brush.seed(7);   // same code -> same image, always
+  noLoop();
+}
+function draw() {
+  background('#f4efe4');
+  try { paint(); } catch (e) { fail(e.message); }
+  window.__done = true;
+}
+function fail(msg) {
+  window.__err = msg;
+  document.body.insertAdjacentHTML('beforeend', '<div id="fail">' + msg + '</div>');
+}
+</script>
+<script src="__SKETCH__"></script>

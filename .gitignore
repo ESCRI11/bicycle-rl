@@ -5,3 +5,10 @@ __pycache__/
 checkpoints/
 outputs/
 .env
+
+.playwright-mcp/
+
+bike/out/
+bike/.render-*.html
+
+bike/photos/*.jpg
