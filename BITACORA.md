@@ -704,3 +704,59 @@ are genuinely ambiguous and only useful for measuring self-consistency.
 
 **Next.** Judge model choice, then: 20 baseline renders scored by hand against the checklist,
 and the ladder's cross-tier pairs run in both orders.
+
+## 012 — 2026-08-26 — v3: the colour arrived, the bicycle did not
+
+**Goal.** Third and final baseline, after the user asked why fifty "paintings" came out grey.
+
+**The bug.** Not the model — the prompt again. Of 88 `brush.fill` calls in v2, the most
+common colour was `#ffffff`, twenty-five times: **white paint on off-white paper**, invisible
+by construction. Second was `#c9553a`, twenty times, which is the exact hex from our worked
+example, copied verbatim. `brush.set` told the same story: `#22221f` ×94 and `#c9553a` ×19,
+both literally the two colours in our example, everything else black or grey.
+
+The prompt never said the paper was off-white, never asked for colour, and handed the model
+two hex codes. The model treated them as the palette. Same failure class as the brush-name
+list in entry 009: **whatever concrete value you put in a prompt, a small model will read as
+an instruction.**
+
+Fixed three ways: state the paper colour and forbid white washes, replace the example's hex
+codes with `WASH_COLOUR` / `INK_COLOUR` placeholders labelled as syntax not palette, and ask
+for a limited palette in the user prompt.
+
+**Numbers — three baselines, same model, same 50 samples.**
+
+| | v1 | v2 | v3 |
+|---|---|---|---|
+| survive `node --check` | 49 | 48 | 46 |
+| render without throwing | 24 (48%) | 32 (64%) | 32 (64%) |
+| failures caused by our prompt | 20 | 0 | 0 |
+| distinct colour literals | ~2 | ~8 | **74** |
+| pure-white fills | — | 25 | **0** |
+| **recognisable bicycles** | **0** | **0** | **0** |
+
+![baseline v3: colour everywhere, still no bicycles](bitacora-assets/baseline-v3.png)
+
+Colour landed completely — teal, crimson, ochre, mint, pink, seventy-four distinct literals
+and not one white wash. What did not land is anything structural. If anything the paintings
+got *less* bicycle-shaped: the sheet is abstract colour blocks, stacked rectangles, isolated
+rings. Given paint, the model spends its budget on paint.
+
+The one structural signal we can measure without a judge: 24 of 50 sketches draw two circles
+of similar large radius — a wheel pair, at least in the code. Almost none of them place that
+pair on a shared baseline with anything joining them.
+
+**The finding that matters.** Three rounds of prompt fixes moved the mechanics — render rate
+48% → 64%, colour from nothing to everything — and moved the bicycle count not at all. It
+stayed 0/50 throughout. **The gap is not prompt-shaped, it is capability-shaped**, which is
+precisely the case for reinforcement learning rather than more prompt engineering. Also a
+useful expectation-setter for GEPA: prompt optimisation should be expected to buy mechanics,
+not composition.
+
+Errors are now entirely the model's own — `brush.ellipse` ×3, `brush.curve`,
+`brush.paintOffWhite` (inventing a method from our own prompt's vocabulary), `new p5.Brush`,
+and one `endShape()` without `beginShape()`.
+
+**Next.** Judge marked as `google/gemini-2.5-flash` via OpenRouter, provisional. Then
+calibration: 20 baseline renders scored by hand against the five checklist items, and the
+ladder's cross-tier pairs run in both orders.

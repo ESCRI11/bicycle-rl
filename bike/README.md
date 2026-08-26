@@ -132,6 +132,18 @@ Watch the bias: what Commons photographs side-on is mostly folding bikes and Dut
 roadsters, so the queries ask for diamond frames explicitly. A pool of small-wheel folders
 would teach the checklist judge the wrong proportions.
 
+## The judge
+
+**`google/gemini-2.5-flash` via OpenRouter** — provisional, pending calibration.
+$0.30/M in, $2.50/M out; at group size 8 over 1,000 steps that is roughly $19 for the whole
+run, so price is not the constraint here — latency and agreement with us are. Pin the exact
+model id in the judge config: a floating alias that updates mid-run makes the reward
+non-stationary, and the training curve then stitches two different reward functions together
+with no way to see it in the plot.
+
+If it fails calibration, the ladder up is `claude-sonnet-5`; the ladder down, if it passes
+easily, is `gemini-2.5-flash-lite` at a third the price.
+
 ## Calibrating the judge: the ablation ladder
 
 ```bash
