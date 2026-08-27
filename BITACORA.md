@@ -1012,3 +1012,48 @@ will take it.
 **Next.** Decide whether to re-run GEPA under those constraints, or skip prompt optimisation
 and go straight to GRPO with the hand-written prompt, which is the one we know is not
 cheating. Budget: $2.95 of $3 spent.
+
+## 017 — 2026-08-27 — What "prompt optimisation" produced, and the rule that stops it
+
+**Did.** Rendered four samples from GEPA's winning prompt, and constrained `gepa_run.py` so
+the trick cannot be repeated.
+
+![the bicycle GEPA wrote into the prompt](bitacora-assets/gepa-prompt-bike.png)
+
+That is the bicycle embedded in the prompt text — extracted from the candidate and rendered
+directly. It is a real bicycle: two equal wheels, closed diamond frame, fork, chainring, drop
+bars. It legitimately scores 5/5. It was written by the reflection model, not by the model
+under training.
+
+![four samples from the optimised prompt](bitacora-assets/gepa-transcriptions.png)
+
+And that is what the 7B produces when given it: **the same bicycle four times.** Only the
+wash colour changes, which is the one freedom the prompt granted ("You MAY freely change the
+colour hex values"). Sample lengths 2068–2289 chars against the 2139-char original — they are
+transcriptions. One still failed, inventing `brush.noWiggle` while copying.
+
+**The constraint.** Three rules in the evaluator, scored as a hard zero rather than asked for
+in the prose — an optimiser routes around a request:
+
+| rule | seed prompt | smuggled winner |
+|---|---|---|
+| no `function paint` in the prompt | absent | **present** |
+| ≤ 3600 chars | 2633 | **6541** |
+| ≤ 32 `brush.*` calls | 26 | **38** |
+
+The caps sit between the two measured prompts, so legitimate growth stays possible and a
+2 KB bicycle does not fit. `--check-prompt` tests a file against the rules without running
+anything; the seed passes, the winner is rejected.
+
+The line being drawn: **knowledge is fair, implementation is not.** "A bicycle has two wheels
+of equal radius on a common baseline, joined by a closed frame" is guidance — the model still
+has to compose the code. `const RH = [-120, 90]` is the answer.
+
+**Also.** Reflection was four fifths of the first run's $1.40, so the default reflection model
+is now `gemini-2.5-flash` rather than Sonnet — roughly eight times cheaper. A constrained
+150-evaluation re-run should land near $0.25 instead of $1.20. Reflection quality drops, but
+the constraints now do the work that judgement was failing to do.
+
+**Not run.** Budget is $2.95 of $3, and the next question is whether prompt optimisation is
+worth another run at all: its honest ceiling here is mechanics, and the composition gap is
+what GRPO exists for.

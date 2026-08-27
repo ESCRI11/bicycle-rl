@@ -17,7 +17,7 @@ reward.py AND-s two judges, which is twice the money over hundreds of evaluation
 GEPA's point is the feedback string, not the number: it is what the reflection model reads
 when it rewrites the prompt. Errors and failed checklist items go in verbatim.
 """
-import argparse, json, os, pathlib, shutil, sys, tempfile, urllib.request
+import argparse, json, os, pathlib, re, shutil, sys, tempfile, urllib.request
 from uuid import uuid4
 
 import generate, judge, render, reward
@@ -31,6 +31,29 @@ WEIGHTS = {"gate": 0.05, "length": 0.05, "checklist": 0.90}
 judge.MODEL = CHECKLIST_MODEL
 
 
+# GEPA's first run scored a perfect 1.0 by evolving a prompt that contained a complete,
+# correct paint() and an order to copy its coordinates verbatim. The judge was right — a
+# transcribed bicycle is a bicycle — but the metric could not tell drawing from copying.
+# Knowledge about bicycles is fair game; an implementation is the answer.
+#
+# Measured on the two prompts: seed 2633 chars / 26 brush calls / no "function paint";
+# the smuggled winner 6541 / 38 / has it. The caps sit between them.
+LIMITS = {"chars": 3600, "brush_calls": 32}
+
+
+def smuggled(text):
+    """Why a zero and not a line in the prose: an optimiser routes around a request."""
+    if "function paint" in text:
+        return "prompt contains a complete paint() function — that is the answer, not instructions"
+    if len(text) > LIMITS["chars"]:
+        return f"prompt is {len(text)} chars, cap is {LIMITS['chars']} — say less, do not paste code"
+    calls = len(re.findall(r"brush\.[a-zA-Z_]\w*\s*\(", text))
+    if calls > LIMITS["brush_calls"]:
+        return (f"{calls} brush.* calls in the prompt, cap is {LIMITS['brush_calls']} — "
+                "describe what to draw, do not write the drawing")
+    return None
+
+
 def evaluate(candidate, example):
     """One rollout. Returns (score 0..1, side_info) — GEPA's `Evaluator` protocol.
 
@@ -38,6 +61,10 @@ def evaluate(candidate, example):
     GEPA as per-objective scores, so the Pareto frontier keeps a candidate that is best at
     only one component.
     """
+    bad = smuggled(candidate["system"])
+    if bad:
+        return 0.0, {"feedback": "REJECTED: " + bad,
+                     "scores": {"gate": 0.0, "length": 0.0, "checklist": 0.0}}
     with tempfile.TemporaryDirectory() as td:
         tmp = pathlib.Path(td)
         # generate.complete() takes a prompt *directory*: hand it the candidate as system.txt
@@ -104,9 +131,18 @@ def main():
     ap.add_argument("--train", type=int, default=8, help="samples averaged per candidate")
     ap.add_argument("--val", type=int, default=4)
     ap.add_argument("--max-metric-calls", type=int, default=150)
-    ap.add_argument("--reflection-lm", default="anthropic/claude-sonnet-5")
+    # reflection, not judging, was 4/5 of the first run's $1.40: it reads every failure
+    # trace and writes a whole replacement prompt each iteration. Flash is ~8x cheaper.
+    ap.add_argument("--reflection-lm", default="google/gemini-2.5-flash")
+    ap.add_argument("--check-prompt", type=pathlib.Path,
+                    help="test a prompt file against the anti-smuggling rules and exit")
     ap.add_argument("--out", type=pathlib.Path, default=HERE / "out" / "gepa" / "system.txt")
     a = ap.parse_args()
+
+    if a.check_prompt:
+        bad = smuggled(a.check_prompt.read_text())
+        print(f"{a.check_prompt}: {'REJECTED — ' + bad if bad else 'ok'}")
+        return
 
     for var in ("OPENAI_BASE_URL", "OPENROUTER_API_KEY"):
         if var not in os.environ:
