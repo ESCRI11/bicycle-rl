@@ -201,11 +201,68 @@ The tubes are drawn twice — fat marker paint, then ink over it — so an ablat
 remove both or the paint layer quietly puts the tube back. Every substitution asserts that
 it fired; a silent no-op would turn a rung into a duplicate of the gold.
 
+## Prompt optimisation (GEPA)
+
+[GEPA](https://github.com/gepa-ai/gepa) rewrites `prompt/system.txt` by reading *why* a
+sample failed, not just how much it scored: the metric hands back the JS error, or the
+judge's own sentence for every failed checklist item, and a reflection model rewrites the
+prompt from that. Score without feedback would just be a slower random search.
+
+**This is the project's first pip dependency.** Everything else is stdlib plus headless
+chrome. gepa is pure python with no transitive dependencies, so the venv holds exactly one
+package — but it does mean `gepa_run.py` is the one script that needs the venv python.
+
+```bash
+python3 -m venv .venv           # from the repo root; .venv/ is already gitignored
+source .venv/bin/activate
+pip install gepa                # gepa 0.1.4, nothing else comes with it
+
+cd bike
+export OPENAI_BASE_URL=http://localhost:11434/v1   # the model that draws
+export OPENROUTER_API_KEY=...                      # checklist judge + reflection model
+python3 gepa_run.py --dry-run                      # 2 evaluations, ~2 min, no optimisation
+python3 gepa_run.py --max-metric-calls 150         # the real run: hours, and money
+```
+
+The task has **one** fixed user prompt, so there is nothing to split into train and val
+examples — the "instances" are just sampling seeds (8 train, 4 val by default). Every
+evaluation draws a fresh completion at temperature 1.0, and averaging over seeds is what
+stops GEPA from chasing one lucky sample.
+
+Per evaluation: generate with the candidate system prompt, render, score
+`0.05*renders + 0.05*length_band + 0.90*(checklist/5)`. Pairwise is dropped — it needs a
+batch to draw opponents from, and there is none inside a single evaluation. **The checklist
+runs on Gemini alone here**, not both judges AND-ed as in `reward.py`: two models over a few
+hundred evaluations is about $2, which is more than the budget.
+
+`--dry-run` performs exactly two evaluations and prints the score and the feedback string,
+which is the whole wiring proven for the price of two samples:
+
+```
+instance 0  score 0.050  {'gate': 0.0, 'length': 1.0, 'checklist': 0.0}
+  feedback: the sketch never drew: brush.wireframe is not a function
+
+instance 1  score 0.460  {'gate': 1.0, 'length': 1.0, 'checklist': 0.4}
+  feedback: closed_frame: Lines do not form a closed, weldable frame between the wheels. |
+  steering: No handlebar or fork is visibly connected to the front wheel. | drivetrain: No
+  chain, chainring, or crank is drawn.
+```
+
+That second one is the point: "no chain, chainring, or crank is drawn" is something a
+reflection model can act on. A bare `0.46` is not.
+
+The reflection model is any OpenRouter id (`--reflection-lm`, default
+`anthropic/claude-sonnet-5`), called through the same eight-line urllib POST as the judge —
+GEPA accepts any `(str | list[dict]) -> str` callable, so litellm never gets installed. The
+winning prompt lands in `out/gepa/system.txt`; copy it over `prompt/system.txt` by hand once
+a rendered batch shows it actually beats the baseline.
+
 ## Layout
 
 ```
 prompt/         system.txt + user.txt — the fixed sketch prompt, as data
 generate.py     sample sketches from an OpenAI-compatible endpoint
+gepa_run.py     GEPA over prompt/system.txt (needs the venv: the only pip dependency)
 template.html   the harness: canvas, paper, seeds, error banner
 render.py       sketches -> PNGs, headless chrome, runtime errors into .err
 ablate.py       the reference bicycle, broken one way at a time -> out/ladder/

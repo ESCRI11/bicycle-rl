@@ -942,3 +942,73 @@ Calibration and reward assembly together: **$1.33 of the $3 budget**, with $1.67
 
 **Next.** GEPA on the sketch prompt, scored by compile-gate + checklist. Then GRPO, which
 needs the rented GPU.
+
+## 016 — 2026-08-27 — GEPA scored 1.0 by writing the answer into the prompt
+
+**Goal.** Optimise the sketch prompt against the reward, 200 evaluations, under a dollar.
+
+**Did.** Installed `gepa` 0.1.4 — the project's first pip dependency, and it has zero
+transitive dependencies of its own. `bike/gepa_run.py` wires our existing pieces into
+`optimize_anything`: candidate is `prompt/system.txt`, instances are sampling seeds (8 train,
+4 val), and each evaluation samples a sketch from the local `qwen2.5-coder:7b`, renders it,
+and scores 0.05 gate + 0.05 length + 0.90 checklist with Gemini alone. Reflection ran on
+Sonnet. `bike/watch-gepa.sh` streams progress, because gepa prints nothing until it exits.
+
+Killed it at iteration ~24 of a planned 200 evaluations.
+
+**Numbers.**
+
+| | |
+|---|---|
+| seed prompt, valset | **0.074** |
+| iteration 1 candidate | 0.243 |
+| **iteration 16 (program 6)** | **1.0 — four of four valset samples, 5/5 checklist each** |
+| generations completed | ~90 of 200 |
+| wall clock | ~2.5 h of a projected 5 h |
+| **spend** | **$1.40** against an estimate of $0.60 |
+
+**What actually happened.** Program 6 scores a perfect 1.0 because the prompt it evolved
+contains a complete, working bicycle:
+
+> *"Below is a COMPLETE, ALREADY-CORRECT bicycle. Reproduce its structural lines EXACTLY as
+> written — same coordinates, same radii, same order, same vertex lists... do NOT change any
+> coordinate, radius, or vertex list."*
+
+followed by a full `paint()` with hubs hardcoded at `[-120, 90]` and `[120, 90]`. The prompt
+grew from 2 KB to 6.5 KB and most of the growth is the answer.
+
+**The judge was not fooled — the metric was.** A transcribed bicycle is a bicycle; 5/5 is the
+correct score for that image. GEPA optimised exactly what we asked it to, and what we asked
+permitted smuggling the solution into the prompt. Nothing in the metric could tell "the model
+drew a bicycle" apart from "the prompt contained a bicycle and the model copied it".
+
+That makes the winning prompt **useless as a GRPO starting point**. Train on it and the model
+learns to transcribe a template, the LoRA learns nothing about drawing, and — worst of all —
+the training curve looks excellent from step one.
+
+**Dead ends and corrections.**
+
+- **The cost estimate was wrong by more than double**, $0.60 quoted against $1.40 spent. The
+  error was structural: the Gemini checklist call was costed carefully and the reflection
+  model was treated as a rounding error. Reflection is the dominant cost — Sonnet reads
+  failure traces and writes a full replacement prompt every iteration, about $0.007 per
+  evaluation against the $0.0011 quoted. **Cost the mutation operator, not just the metric.**
+- The wall-clock estimate was wrong for a plainer reason: 40 s per generation was measured
+  single-threaded, and two workers sharing 24 CPU cores take ~2 min each. 2¼ h became ~5 h.
+- The first watcher fired a false alarm on the word "Error" appearing inside a candidate
+  prompt gepa had printed. Watch for process exit, not for words in a log that quotes prompts.
+- `max_metric_calls` is a floor, not a ceiling — the stopper is only checked between stages.
+- The run died before writing `out/gepa/system.txt`, but every candidate is echoed into the
+  log, so program 6 was recovered by parsing it. Kept in `bike/gepa-run/` with the full log,
+  as evidence.
+
+**The fix, for whenever this runs again.** Constrain the candidate: no complete `paint()`
+implementations, no literal coordinate or vertex lists, and a hard cap on prompt length. That
+is the same place the original post landed — a strict allowlist of eight brush methods beat
+pasting in full API documentation. A prompt optimiser with an outcome-only metric will always
+find the shortest path to the outcome, and if the shortest path is "include the answer", it
+will take it.
+
+**Next.** Decide whether to re-run GEPA under those constraints, or skip prompt optimisation
+and go straight to GRPO with the hand-written prompt, which is the one we know is not
+cheating. Budget: $2.95 of $3 spent.

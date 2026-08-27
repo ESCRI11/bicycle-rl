@@ -1,0 +1,122 @@
+depicting a BICYCLE, side view, on a 700x700 WEBGL canvas whose origin is the centre,
+x and y run from -350 to 350, +y points DOWN. The paper is off-white (#f4efe4); never
+use white or near-white paint, it is invisible.
+
+Output ONLY a complete JavaScript function called paint(). No setup(), no createCanvas(),
+no background(), no explanation, no markdown fences. The object `brush` is already in
+scope; call it as brush.methodName(...) only. NEVER write P5Brush, p5.brush, window, or
+any other global — that identifier does not exist and instantly crashes the whole sketch
+(this has happened before: "P5Brush is not defined" scores zero). If you are not calling
+`brush.something(...)`, `const`, `let`, a JS keyword, or a p5 builtin (cos, sin, atan2,
+TWO_PI, PI, random, map, min, max, abs), you are almost certainly about to crash.
+
+======================  COPY THIS SKELETON  ======================
+Below is a COMPLETE, ALREADY-CORRECT bicycle. Reproduce its structural lines (section 1-4)
+EXACTLY as written — same coordinates, same radii, same order, same vertex lists. Every
+past failure came from a model "improvising" the wheels, frame, fork, or chain instead of
+copying these numbers, which breaks the geometric checklist (equal wheels, closed frame,
+steering, drivetrain). You MAY freely change the colour hex values, wash opacity/texture
+numbers, add spokes/saddle/hatching, and add brush.wiggle(0.1-0.3) to non-critical lines —
+but do NOT change any coordinate, radius, or vertex list in sections 1-4, and do NOT delete
+any of those calls.
+
+function paint() {
+  const INK_COLOUR = '#2b2320';
+  const WASH_A = '#8b3a3a';
+  const WASH_B = '#3a5f8b';
+
+  const R  = 95;
+  const RH = [-120, 90];   // rear hub
+  const FH = [ 120, 90];   // front hub
+  const BB = [ -40, 90];   // bottom bracket
+  const ST = [ -90, -60];  // top of seat tube
+  const HT = [  95, -40];  // head tube top
+  const HB = [  60, -90];  // handlebar grip
+
+  // ---- 0. WASH (paint first, behind everything) ----
+  brush.fill(WASH_A, 90);
+  brush.fillBleed(0.15, 'out');
+  brush.fillTexture(0.6, 0.4);
+  brush.polygon([[RH[0]-R, -20], [FH[0]+R, -20], [FH[0]+R, 160], [RH[0]-R, 160]]);
+  brush.noFill();
+
+  // ---- 1. WHEELS (equal radius, perfectly circular — do not touch these lines) ----
+  brush.noField();
+  brush.set('rotring', INK_COLOUR, 2);
+  brush.circle(RH[0], RH[1], R, false);
+  brush.circle(FH[0], FH[1], R, false);
+  brush.circle(RH[0], RH[1], 6, false);
+  brush.circle(FH[0], FH[1], 6, false);
+  for (let i = 0; i < 4; i++) {
+    const a = i * (TWO_PI / 4);
+    brush.line(RH[0], RH[1], RH[0] + R * cos(a), RH[1] + R * sin(a));
+    brush.line(FH[0], FH[1], FH[0] + R * cos(a), FH[1] + R * sin(a));
+  }
+
+  // ---- 2. CLOSED FRAME (one continuous closed polygon — do not touch these vertices) ----
+  brush.set('pen', INK_COLOUR, 3);
+  brush.polygon([RH, BB, HT, ST, RH]);
+
+  // ---- 3. FORK + STEERING (must touch FH and HT exactly — do not touch these coords) ----
+  brush.line(HT[0], HT[1], FH[0], FH[1]);
+  brush.line(HT[0], HT[1], HB[0], HB[1]);
+  brush.line(HB[0] - 15, HB[1] - 8, HB[0] + 15, HB[1] + 8);
+
+  // ---- 4. DRIVETRAIN (chainring at BB, chain to RH — do not touch these coords) ----
+  brush.circle(BB[0], BB[1], 24, false);
+  brush.line(BB[0] + 22, BB[1] - 4, RH[0] + 18, RH[1] - 4);
+  brush.line(BB[0] + 22, BB[1] + 4, RH[0] + 18, RH[1] + 4);
+  brush.line(BB[0], BB[1], BB[0] + 18, BB[1] + 18);
+
+  // ---- 5. SEAT + extra decoration (free to customise) ----
+  brush.set('2B', INK_COLOUR, 2);
+  brush.wiggle(0.15);
+  brush.line(ST[0] - 12, ST[1] - 6, ST[0] + 12, ST[1] - 6);
+  brush.wiggle(0);
+
+  brush.fill(WASH_B, 70);
+  brush.circle(BB[0], BB[1], 30, false);
+  brush.noFill();
+}
+
+======================  WHY PAST ATTEMPTS FAILED  ======================
+(a) One sketch referenced P5Brush (undeclared global) and crashed instantly — scored zero.
+    Never reference anything but `brush`, const/let you declared, JS keywords, or the p5
+    builtins listed above.
+(b) Other sketches rewrote the wheel/frame/fork/chain coordinates from scratch instead of
+    copying the skeleton, producing unequal wheels, an open frame, a disconnected fork, or
+    a missing chain — each of those is a separate checklist item and each miss costs real
+    points. The skeleton above already satisfies all five checklist items; changing its
+    numbers is the single most common cause of failure.
+
+======================  WHAT YOU MAY CHANGE  ======================
+- INK_COLOUR, WASH_A, WASH_B hex values (pick saturated, non-white colours).
+- brush.fill opacity (60-120), brush.fillBleed/fillTexture numbers.
+- brush names used in brush.set (must be one of: 'pen' 'rotring' '2B' 'HB' '2H' 'cpencil'
+  'pastel' 'crayon' 'charcoal' 'spray' 'marker').
+- Adding extra decorative brush.spline/brush.hatch/brush.wiggle calls, as long as you never
+  wiggle or field-warp the wheel circles, hub points, or chainring circle, and never delete
+  or renumber sections 1-4.
+- Adding a saddle shape, extra washes, extra spokes, hatching for shading.
+
+Do NOT call brush.noWiggle, brush.noStroke, brush.background, brush.reset, brush.stroke,
+brush.color, or any method not in this list: brush.set, brush.line, brush.spline,
+brush.circle, brush.polygon, brush.beginShape, brush.vertex, brush.endShape, brush.fill,
+brush.fillBleed, brush.fillTexture, brush.noFill, brush.hatchStyle, brush.hatch,
+brush.noHatch, brush.field, brush.noField, brush.wiggle. Field name (if used) must be
+exactly one of: 'hand' 'curved' 'zigzag' 'waves' 'seabed' 'spiral' 'columns', and never
+active while drawing the wheel circles, hubs, or chainring.
+
+======================  FINAL CHECK BEFORE YOU EMIT  ======================
+1. Does the function contain brush.circle(RH[0], RH[1], R, false) and
+   brush.circle(FH[0], FH[1], R, false) with the SAME R — equal wheels?
+2. Does it contain brush.polygon([RH, BB, HT, ST, RH]) unchanged — closed frame?
+3. Does it contain brush.line(HT[0], HT[1], FH[0], FH[1]) unchanged — fork touching FH?
+4. Does it contain brush.circle(BB[0], BB[1], 24, false) plus the two chain
+   brush.line calls to RH — drivetrain?
+5. Is every colour identifier declared as a const earlier in this SAME function, spelled
+   identically everywhere (case-sensitive)?
+6. Is every brush.* call spelled exactly as in the API list, with no invented methods?
+7. Is `P5Brush`, `window`, or any other undeclared global absent from the whole function?
+Only once all seven are true, emit the single complete paint() function — no markdown
+fences, no text before or after it.
