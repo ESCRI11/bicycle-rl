@@ -1,0 +1,9 @@
+{
+  "_comment": "One question per call. A frontier judge answers all five in one JSON and does it well; a local VLM asked five at once returns the same score for a correct bicycle and an incoherent one, then answers them correctly one at a time. Set JUDGE_SINGLE=1 for local judges.",
+  "_suffix": " Reply with only the word true or the word false.",
+  "two_wheels": "Does this drawing show exactly two wheel-like round shapes, both fully drawn?",
+  "equal_wheels": "Are the two wheels in this drawing the same size, within about 20%?",
+  "closed_frame": "Do the straight lines between the wheels form a closed shape with no gaps?",
+  "steering": "Is a handlebar or fork drawn connecting to the front wheel?",
+  "drivetrain": "Is a chain, chainring or crank drawn between the frame and the rear wheel?"
+}

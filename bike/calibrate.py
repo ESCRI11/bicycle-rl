@@ -17,6 +17,14 @@ from concurrent.futures import ThreadPoolExecutor
 
 import judge
 
+
+def safe(fn, *a):
+    """A judge that errors is a data point, not a crash: calibration exists to find that out."""
+    try:
+        return fn(*a)
+    except Exception as e:
+        return {"score": 0, "_error": f"{type(e).__name__}: {str(e)[:80]}"}
+
 HERE = pathlib.Path(__file__).parent
 LADDER = HERE / "out" / "ladder"
 
@@ -50,7 +58,7 @@ def main():
 
     # 1 — per-item truth on the ablations
     print(f"judge: {judge.MODEL}\n\n== checklist on the ladder")
-    scores = dict(zip(RUNGS, pool.map(lambda n: judge.checklist(png[n]), RUNGS)))
+    scores = dict(zip(RUNGS, pool.map(lambda n: safe(judge.checklist, png[n]), RUNGS)))
     caught = total = 0
     for name, (tier, breaks) in RUNGS.items():
         s = scores[name]
@@ -71,8 +79,8 @@ def main():
 
     def both_ways(pair):
         x, y = pair
-        fwd = judge.pairwise(png[x], png[y])          # better one is A
-        rev = judge.pairwise(png[y], png[x])          # better one is B
+        fwd = safe(judge.pairwise, png[x], png[y])    # better one is A
+        rev = safe(judge.pairwise, png[y], png[x])    # better one is B
         return pair, fwd, rev
 
     right = flips = right_struct = n_struct = 0
@@ -111,7 +119,7 @@ def main():
     # optional — checklist over real baseline output, for the score distribution
     if a.baseline:
         base = sorted((HERE / "out" / "baseline").glob("gen_*.png"))[: a.baseline]
-        got = list(pool.map(judge.checklist, base))
+        got = list(pool.map(lambda b: safe(judge.checklist, b), base))
         dist = {i: sum(g["score"] == i for g in got) for i in range(6)}
         print(f"\n== checklist on {len(base)} baseline renders\n  score distribution {dist}")
         report["baseline_scores"] = {p.name: g["score"] for p, g in zip(base, got)}

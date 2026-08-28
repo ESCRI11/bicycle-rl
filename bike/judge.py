@@ -44,15 +44,29 @@ class JudgeUnavailable(RuntimeError):
 
 
 def ask(prompt_file, labelled, temperature=0.0, tries=3):
+    return ask_text((HERE / "prompt" / prompt_file).read_text().strip(), labelled,
+                    temperature, tries, schema=SCHEMAS.get(prompt_file),
+                    name=prompt_file.split(".")[0])
+
+
+def ask_text(prompt, labelled, temperature=0.0, tries=3, schema=None, name="out"):
     """labelled is [(caption, path), ...]. The caption goes in front of each image as its own
     text block: three bare images in a row and the model loses track of which is which — it
     told us two visibly different drawings were identical."""
-    content = [{"type": "text", "text": (HERE / "prompt" / prompt_file).read_text().strip()}]
+    content = [{"type": "text", "text": prompt}]
     for caption, path in labelled:
         content.append({"type": "text", "text": caption})
         content.append({"type": "image_url", "image_url": {"url": data_url(path)}})
-    body = json.dumps({"model": MODEL, "temperature": temperature,
-                       "messages": [{"role": "user", "content": content}]}).encode()
+    payload = {"model": MODEL, "temperature": temperature,
+               "messages": [{"role": "user", "content": content}]}
+    # a small local judge cannot hold a JSON format on its own — it burned three retries on
+    # malformed output. vLLM constrains decoding to the schema, so what we measure is
+    # whether the model can SEE, not whether it can format.
+    if (os.environ.get("JUDGE_STRUCTURED", "1" if "localhost" in BASE else "0") == "1"
+            and schema):
+        payload["response_format"] = {"type": "json_schema",
+                                      "json_schema": {"name": name, "schema": schema}}
+    body = json.dumps(payload).encode()
     # a judge that answers with prose, an empty string or a 502 must cost one call, not a
     # multi-hour run: GEPA died at iteration 1 on a bare json.loads of an empty response
     last = ""
@@ -75,8 +89,49 @@ def ask(prompt_file, labelled, temperature=0.0, tries=3):
 
 ITEMS = ("two_wheels", "equal_wheels", "closed_frame", "steering", "drivetrain")
 
+_ITEM = {"type": "object", "additionalProperties": False,
+         "properties": {"yes": {"type": "boolean"}, "why": {"type": "string"}},
+         "required": ["yes", "why"]}
+SCHEMAS = {
+    "judge_checklist.txt": {"type": "object", "additionalProperties": False,
+                            "properties": {k: _ITEM for k in ITEMS},
+                            "required": list(ITEMS)},
+    "judge_pairwise.txt": {"type": "object", "additionalProperties": False,
+                           "properties": {"a_has": {"type": "string"},
+                                          "b_has": {"type": "string"},
+                                          "winner": {"type": "string", "enum": ["A", "B"]},
+                                          "why": {"type": "string"}},
+                           "required": ["a_has", "b_has", "winner", "why"]},
+}
+
+
+def checklist_single(png):
+    """Five one-question calls instead of one five-question call, and no reference photo.
+
+    A local 72B scored a correct bicycle and an incoherent scramble identically (2/5 each)
+    when asked all five at once with a photo alongside; asked one at a time it separates
+    them. Frontier judges do not need this — it costs 5x the calls, which is free locally.
+    """
+    items = json.loads((HERE / "prompt" / "judge_items.json").read_text())
+    suffix, qs = items["_suffix"], {k: v for k, v in items.items() if not k.startswith("_")}
+    out = {}
+    for k, q in qs.items():
+        # pass the question as text, never through a shared temp file: calibrate runs six
+        # threads in one process, they raced on the filename, and the gold bicycle scored
+        # 0/5 while the scrambled one scored 3/5 because questions swapped between images
+        try:
+            yes = ask_text(q + suffix, [("THE DRAWING:", png)]) is True
+        except JudgeUnavailable:
+            yes = False
+        out[k] = {"yes": yes, "why": q[:40]}
+    return out
+
 
 def checklist(png, photo=None):
+    if os.environ.get("JUDGE_SINGLE") == "1":
+        out = checklist_single(png)
+        out["score"] = sum(bool(out[k]["yes"]) for k in ITEMS)
+        return out
     photo = photo or reference_photo(png.name)
     out = ask("judge_checklist.txt",
               [("REFERENCE PHOTOGRAPH — do not grade this one:", photo),

@@ -8,6 +8,12 @@
 # (reference photograph + drawing A + drawing B) and vLLM defaults to one.
 set -euo pipefail
 MODEL=${1:-Qwen/Qwen2.5-VL-7B-Instruct}
+
+# These boxes ship the driver but no CUDA toolkit, so anything that JIT-compiles dies with
+# "Could not find nvcc and default cuda_home='/usr/local/cuda' doesn't exist". Keep vLLM on
+# prebuilt kernels instead of installing a 3 GB toolkit.
+export VLLM_USE_FLASHINFER_SAMPLER=${VLLM_USE_FLASHINFER_SAMPLER:-0}
+export VLLM_ATTENTION_BACKEND=${VLLM_ATTENTION_BACKEND:-FLASH_ATTN}
 exec "$HOME/.local/bin/vllm" serve "$MODEL" \
   --port "${PORT:-8000}" \
   --max-model-len "${MAXLEN:-16384}" \
