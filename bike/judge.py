@@ -15,7 +15,11 @@ import argparse, base64, hashlib, json, os, pathlib, re, sys, time, urllib.error
 HERE = pathlib.Path(__file__).parent
 PHOTOS = HERE / "photos"
 MODEL = os.environ.get("JUDGE_MODEL", "google/gemini-2.5-flash")
-URL = "https://openrouter.ai/api/v1/chat/completions"
+# JUDGE_BASE_URL points this at a local vLLM instead of OpenRouter: same OpenAI-compatible
+# shape, no network hop, no per-call cost. The key is ignored by vLLM but must be present.
+BASE = os.environ.get("JUDGE_BASE_URL", "https://openrouter.ai/api/v1").rstrip("/")
+URL = BASE + "/chat/completions"
+KEY = os.environ.get("OPENROUTER_API_KEY") or os.environ.get("JUDGE_API_KEY", "EMPTY")
 FENCE = re.compile(r"```(?:json)?\s*(.*?)```", re.S)
 
 
@@ -56,7 +60,7 @@ def ask(prompt_file, labelled, temperature=0.0, tries=3):
         try:
             req = urllib.request.Request(URL, data=body, headers={
                 "Content-Type": "application/json",
-                "Authorization": "Bearer " + os.environ["OPENROUTER_API_KEY"],
+                "Authorization": "Bearer " + KEY,
                 "HTTP-Referer": "https://github.com/ESCRI11/bicycle-rl", "X-Title": "bicycle-rl"})
             with urllib.request.urlopen(req, timeout=180) as r:
                 text = json.load(r)["choices"][0]["message"]["content"]
@@ -96,8 +100,8 @@ def main():
     ap.add_argument("mode", choices=["checklist", "pairwise"])
     ap.add_argument("images", nargs="+", type=pathlib.Path)
     a = ap.parse_args()
-    if "OPENROUTER_API_KEY" not in os.environ:
-        sys.exit("OPENROUTER_API_KEY not set")
+    if "openrouter" in BASE and "OPENROUTER_API_KEY" not in os.environ:
+        sys.exit("OPENROUTER_API_KEY not set (or point JUDGE_BASE_URL at a local vLLM)")
     out = checklist(a.images[0]) if a.mode == "checklist" else pairwise(*a.images[:2])
     print(json.dumps(out, indent=1))
 

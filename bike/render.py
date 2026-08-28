@@ -8,16 +8,40 @@ Each sketch file defines one function `paint()`; the harness (template.html) own
 canvas, the paper colour and the seeds. Syntax errors are caught by `node --check` before
 we pay for a browser; runtime errors are painted onto the image as a red banner.
 """
-import argparse, pathlib, re, shutil, subprocess, sys
+import argparse, os, pathlib, re, shutil, subprocess, sys
 
 HERE = pathlib.Path(__file__).parent
 CHROME = next((c for c in ("google-chrome", "chromium", "chromium-browser")
                if shutil.which(c)), None)
+BACKEND = os.environ.get("RENDER_BACKEND", "cli")     # "playwright" where the CLI crashes
 FLAGS = ["--headless=new", "--hide-scrollbars", "--window-size=700,700",
          "--enable-unsafe-swiftshader", "--virtual-time-budget=15000", "--dump-dom"]
 # the harness paints runtime errors into a #fail div; --dump-dom hands them back as text,
 # which is what the compile gate reads. Skip the template's own literal.
 FAIL = re.compile(r'id="fail">([^<]*)')
+
+
+def _render_playwright(page: pathlib.Path, png: pathlib.Path) -> str:
+    """Chrome's CLI --screenshot mode core-dumps on some VMs (crashpad CHECK, `trap int3`)
+    while the same binary driven over playwright's pipe works fine. Same flags, same
+    template, different transport. Launch per call: sync playwright is not thread-safe and
+    render is far cheaper than the generation it follows.
+    # ponytail: reuse one browser per batch if render time ever matters
+    """
+    from playwright.sync_api import sync_playwright
+    with sync_playwright() as pw:
+        br = pw.chromium.launch(args=["--no-sandbox", "--disable-gpu",
+                                      "--enable-unsafe-swiftshader"])
+        try:
+            pg = br.new_page(viewport={"width": 700, "height": 700})
+            pg.goto(f"file://{page.resolve()}")
+            pg.wait_for_function("window.__done === true", timeout=30000)
+            pg.wait_for_timeout(400)                      # let the last frame land
+            err = pg.evaluate("() => document.querySelector('#fail')?.textContent || ''")
+            pg.screenshot(path=str(png))
+            return err
+        finally:
+            br.close()
 
 
 def render(js: pathlib.Path, out_dir: pathlib.Path) -> tuple[pathlib.Path, str]:
@@ -29,6 +53,16 @@ def render(js: pathlib.Path, out_dir: pathlib.Path) -> tuple[pathlib.Path, str]:
     page.write_text((HERE / "template.html").read_text()
                     .replace("__SKETCH__", str(js.resolve())))
     png = out_dir / f"{js.stem}.png"
+    if BACKEND == "playwright":
+        try:
+            err = _render_playwright(page, png)
+        except Exception as e:
+            return None, f"{type(e).__name__}: {str(e)[:160]}"
+        finally:
+            page.unlink(missing_ok=True)
+        if err:
+            (out_dir / f"{js.stem}.err").write_text(err + "\n")
+        return (png if png.exists() else None), (err[:160] if err else "")
     try:
         r = subprocess.run([CHROME, *FLAGS, f"--screenshot={png.resolve()}",
                             f"file://{page.resolve()}"],
@@ -53,8 +87,8 @@ def main():
     ap.add_argument("sketches", nargs="+", type=pathlib.Path)
     ap.add_argument("-o", "--out", type=pathlib.Path, default=HERE / "out")
     a = ap.parse_args()
-    if not CHROME:
-        sys.exit("no chrome/chromium on PATH")
+    if not CHROME and BACKEND != "playwright":
+        sys.exit("no chrome/chromium on PATH (or set RENDER_BACKEND=playwright)")
     a.out.mkdir(parents=True, exist_ok=True)
     ok = 0
     for js in a.sketches:
