@@ -1057,3 +1057,56 @@ the constraints now do the work that judgement was failing to do.
 **Not run.** Budget is $2.95 of $3, and the next question is whether prompt optimisation is
 worth another run at all: its honest ceiling here is mechanics, and the composition gap is
 what GRPO exists for.
+
+## 018 — 2026-08-28 — Constrained GEPA finds nothing, and the reason is the measurement
+
+**Goal.** Re-run prompt optimisation with the answer-smuggling blocked, cheaply, under a
+hard $1.50 cap.
+
+**Numbers.**
+
+| | |
+|---|---|
+| metric calls | 154 |
+| candidates explored | 10 |
+| **best program** | **program 0 — the hand-written seed** |
+| best mutation | 0.2675, below the seed |
+| output prompt | byte-identical to the seed (same md5) |
+| **spend** | **$0.123** of a $1.50 cap |
+
+The constraints did their job: the winning prompt is 2639 chars against the seed's 2633, and
+nothing resembling a `paint()` implementation appeared in any candidate. With smuggling shut
+off, **GEPA could not beat a hand-written prompt in 154 evaluations.**
+
+**Why — and this is the part worth keeping.** The measurement is noisier than anything GEPA
+could have found. One candidate's four valset scores: `{0: 0.46, 1: 0.05, 2: 0.46, 3: 0.05}`
+— same prompt, same model, nine-fold spread on sampling luck alone. Across 9 candidates × 4
+instances the per-instance standard deviation is **0.145**, so the standard error of a
+4-instance mean is **0.072**. The seed's own valset score across our four runs came out
+**0.074, 0.235, 0.0625, 0.325**.
+
+To resolve a 0.10 difference between two prompts you would need roughly **23 instances per
+candidate**, six times what we ran, and therefore six times the generation compute. At 2 min
+per generation on CPU that is a 30-hour run. **We were not measuring prompts, we were
+measuring sampling noise**, and no amount of clever reflection fixes a metric that cannot
+tell two candidates apart.
+
+**Dead ends.** Two crashes before the run that completed, both the same shape — one flaky
+external call killing a multi-hour job:
+
+- chrome hung 90 s on a runaway sketch and `subprocess.TimeoutExpired` propagated out of
+  `render()`. Now returns a failed render, which is what it is.
+- the judge answered with something that was not JSON and a bare `json.loads` raised at
+  iteration 1. Now three retries with backoff, then a typed `JudgeUnavailable`.
+- and a blanket guard: `evaluate()` catches everything and returns 0.0 with the exception as
+  feedback. An unattended optimiser should lose one evaluation, never the run.
+
+**Also.** The OpenRouter API key was exposed in a session transcript by running `bash -x` on
+a script that carries it in a curl header. Transcripts are plain JSONL under
+`~/.claude/projects/<slug>/`. Rotate the key; do not trace scripts that hold secrets.
+
+**Conclusion for the workplan.** Prompt optimisation is done, and the answer is that our
+hand-written prompt survives. That is a real result: three rounds of hand-fixing (entries
+009–012) had already taken the reachable mechanical wins, and GEPA confirms there is little
+left on the table at this measurement precision. **Skip further prompt work and spend the
+compute on GRPO**, where the gradient comes from thousands of rollouts rather than four.

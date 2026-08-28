@@ -55,6 +55,15 @@ def smuggled(text):
 
 
 def evaluate(candidate, example):
+    """Never raises: GEPA has now lost two runs to a single bad evaluation."""
+    try:
+        return _evaluate(candidate, example)
+    except Exception as e:
+        return 0.0, {"feedback": f"evaluation failed: {type(e).__name__}: {str(e)[:200]}",
+                     "scores": {"gate": 0.0, "length": 0.0, "checklist": 0.0}}
+
+
+def _evaluate(candidate, example):
     """One rollout. Returns (score 0..1, side_info) — GEPA's `Evaluator` protocol.
 
     side_info["feedback"] is the reflection signal; side_info["scores"] is picked up by

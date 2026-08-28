@@ -33,6 +33,10 @@ def render(js: pathlib.Path, out_dir: pathlib.Path) -> tuple[pathlib.Path, str]:
         r = subprocess.run([CHROME, *FLAGS, f"--screenshot={png.resolve()}",
                             f"file://{page.resolve()}"],
                            capture_output=True, text=True, timeout=90)
+    except subprocess.TimeoutExpired:
+        # a sketch can loop forever; that is a failed render, not a reason to kill the
+        # caller. GEPA lost a whole run to this propagating out of one evaluation.
+        return None, "chrome timed out after 90s (runaway sketch?)"
     finally:
         page.unlink(missing_ok=True)
     if not png.exists():

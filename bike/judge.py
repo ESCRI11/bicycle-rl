@@ -10,7 +10,7 @@ non-stationary and the training curve becomes two reward functions stitched toge
 
 Prompts live in prompt/judge_*.txt, never in this file.
 """
-import argparse, base64, hashlib, json, os, pathlib, re, sys, urllib.request
+import argparse, base64, hashlib, json, os, pathlib, re, sys, time, urllib.error, urllib.request
 
 HERE = pathlib.Path(__file__).parent
 PHOTOS = HERE / "photos"
@@ -35,7 +35,11 @@ def reference_photo(key):
     return pool[int(hashlib.sha1(str(key).encode()).hexdigest(), 16) % len(pool)]
 
 
-def ask(prompt_file, labelled, temperature=0.0):
+class JudgeUnavailable(RuntimeError):
+    """Every retry failed. The caller decides what that means; it must not end a run."""
+
+
+def ask(prompt_file, labelled, temperature=0.0, tries=3):
     """labelled is [(caption, path), ...]. The caption goes in front of each image as its own
     text block: three bare images in a row and the model loses track of which is which — it
     told us two visibly different drawings were identical."""
@@ -45,14 +49,24 @@ def ask(prompt_file, labelled, temperature=0.0):
         content.append({"type": "image_url", "image_url": {"url": data_url(path)}})
     body = json.dumps({"model": MODEL, "temperature": temperature,
                        "messages": [{"role": "user", "content": content}]}).encode()
-    req = urllib.request.Request(URL, data=body, headers={
-        "Content-Type": "application/json",
-        "Authorization": "Bearer " + os.environ["OPENROUTER_API_KEY"],
-        "HTTP-Referer": "https://github.com/ESCRI11/bicycle-rl", "X-Title": "bicycle-rl"})
-    with urllib.request.urlopen(req, timeout=180) as r:
-        text = json.load(r)["choices"][0]["message"]["content"]
-    m = FENCE.search(text)
-    return json.loads(m.group(1) if m else text)
+    # a judge that answers with prose, an empty string or a 502 must cost one call, not a
+    # multi-hour run: GEPA died at iteration 1 on a bare json.loads of an empty response
+    last = ""
+    for n in range(tries):
+        try:
+            req = urllib.request.Request(URL, data=body, headers={
+                "Content-Type": "application/json",
+                "Authorization": "Bearer " + os.environ["OPENROUTER_API_KEY"],
+                "HTTP-Referer": "https://github.com/ESCRI11/bicycle-rl", "X-Title": "bicycle-rl"})
+            with urllib.request.urlopen(req, timeout=180) as r:
+                text = json.load(r)["choices"][0]["message"]["content"]
+            m = FENCE.search(text)
+            return json.loads(m.group(1) if m else text)
+        except Exception as e:                       # parse, HTTP, timeout, malformed body
+            last = f"{type(e).__name__}: {str(e)[:120]}"
+            if n < tries - 1:
+                time.sleep(2 * (n + 1))
+    raise JudgeUnavailable(last)
 
 
 ITEMS = ("two_wheels", "equal_wheels", "closed_frame", "steering", "drivetrain")
