@@ -1110,3 +1110,73 @@ hand-written prompt survives. That is a real result: three rounds of hand-fixing
 009–012) had already taken the reachable mechanical wins, and GEPA confirms there is little
 left on the table at this measurement precision. **Skip further prompt work and spend the
 compute on GRPO**, where the gradient comes from thousands of rollouts rather than four.
+
+## 019 — 2026-08-28 — A free judge on the rented box, and three bugs that looked like a stupid model
+
+**Goal.** Run the whole reward locally on a rented A100, no API, and find out which
+open-weight vision model can actually judge a bicycle.
+
+**Did.** Rented an A100 80 GB (Prime Intellect, Ubuntu 22.04, 16 cores, 711 GB disk),
+`box/` now holds a one-shot setup so the next box takes one command. Served candidate judges
+with vLLM and put each through the ablation ladder.
+
+**Numbers — the same ladder, four judges:**
+
+| | Gemini Flash | Sonnet 5 | **local 72B-AWQ** | local 32B-AWQ | local 7B |
+|---|---|---|---|---|---|
+| structural pairs | 88% | 88% | **82%** | 72% | 62% |
+| position flips | 29% | 8% | **18%** | 37% | 47% |
+| decisive pairs correct | 85% | 86% | **84%** | 88% | 70% |
+| cost per training run | ~$25 | ~$90 | **$0** | $0 | $0 |
+
+`Qwen2.5-VL-72B-Instruct-AWQ` is within a few points of the frontier APIs and costs nothing
+per call. The 32B is not merely weaker, it is **inverted**: it scores the incoherent
+`scrambled` rung 5/5 and the correct bicycle 3/5. The 7B returns a constant.
+
+**Three bugs, each of which looked exactly like an incompetent model.** This is the entry's
+real content:
+
+1. **Five questions in one call produced a constant.** The 72B scored a correct bicycle and
+   an incoherent scramble identically (2/5 each) when asked all five checklist items in one
+   JSON alongside a reference photograph. Asked one question at a time it separates them.
+   Well-formed output, sensible reasons, and no dependence on the image.
+2. **A shared temp file raced.** The first single-question version wrote each question to
+   `prompt/_item_<pid>.txt`, and calibration runs six threads in one process — they
+   overwrote each other and questions swapped between images. Gold scored 0/5, `scrambled`
+   3/5. Caught only because a manual run had been reproducible and disagreed.
+3. **`json.loads` rejected `True`.** The 32B answers with a capital T, which is not valid
+   JSON, so three retries burned and every item came back false. The model had been
+   answering correctly the whole time. Models are not obliged to speak JSON.
+
+Each produced plausible, well-formed, entirely wrong numbers. The only reason any of them
+was caught is that the ladder has known-correct answers: **when the judge disagrees with
+ground truth, it is either a bad judge or a bug, and you have to find out which before
+spending GPU hours.**
+
+**Then the checklist got smaller and better.** An item that answers the same way regardless
+of the image is not a checklist item, it is a constant — and it "catches" its own ablation
+for free, flattering the score. Measured per-item on the 72B: `equal_wheels` always true
+(says the wheels match on `wheels-unequal` too), `steering` and `drivetrain` always false —
+it cannot see a fork or a chain at this line weight, even on the gold bicycle. That left a
+two-item checklist.
+
+The user proposed swapping the dead `equal_wheels` for **"is this drawing recognisable as a
+bicycle?"** — a holistic question rather than a structural one. It separates perfectly:
+
+| | verdict |
+|---|---|
+| all 7 ladder rungs (bicycle-derived) | **true**, 7/7 |
+| 24 baseline renders | **false**, 24/24 |
+
+Final three-item checklist, ordering the whole range correctly: gold 3/3, ablations 2/3,
+`baseline_033` (two circles, nothing else) 1/3, `baseline_005` 0/3. Coarse recognition,
+wheel count and frame closure — the three things this judge can actually see, and the three
+rungs the model has to climb first.
+
+**Numbers on speed.** 18 judge calls in 7.4 s, so ~10 s per 8-rollout step. Judge load from
+warm page cache: 91 s for the 72B. Training and the judge cannot share the card (the judge
+holds 68 GB), so the run swaps models between phases: generate a cycle of rollouts, swap,
+judge them, swap back. ~64 s per step all in, **~5 hours for 300 steps** on the box already
+rented, with no API and one machine to manage.
+
+**Next.** Write the training loop and run it.

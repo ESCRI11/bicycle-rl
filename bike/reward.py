@@ -16,13 +16,15 @@ swapped for structure: a bicycle is judged on facts before taste.
 A sketch that does not render scores 0.0 and is never sent to a judge — there is nothing to
 look at, and judge calls are the expensive part.
 """
-import argparse, json, pathlib, random, sys
+import argparse, json, os, pathlib, random, sys
 from concurrent.futures import ThreadPoolExecutor
 
 import judge
 
-CHECKLIST_MODELS = ("google/gemini-2.5-flash", "anthropic/claude-sonnet-5")
-PAIRWISE_MODEL = "anthropic/claude-sonnet-5"
+# one local judge on the GPU box, two API judges when their blind spots must cancel out
+CHECKLIST_MODELS = tuple(os.environ.get(
+    "CHECKLIST_MODELS", "google/gemini-2.5-flash,anthropic/claude-sonnet-5").split(","))
+PAIRWISE_MODEL = os.environ.get("PAIRWISE_MODEL", "anthropic/claude-sonnet-5")
 WEIGHTS = {"gate": 0.05, "length": 0.05, "checklist": 0.30, "pairwise": 0.60}
 LO, HI = 300, 2800            # the gold reference is 2676 code chars: the band must not punish it
 
@@ -51,8 +53,9 @@ def checklist_and(png):
     for model in CHECKLIST_MODELS:
         judge.MODEL = model
         outs.append(judge.checklist(png))
-    items = {k: all(o.get(k, {}).get("yes") for o in outs) for k in judge.ITEMS}
-    return sum(items.values()) / len(judge.ITEMS), items
+    asked = [k for k in outs[0] if not k.startswith("_")]
+    items = {k: all(o.get(k, {}).get("yes") for o in outs) for k in asked}
+    return sum(items.values()) / len(asked), items
 
 
 def duel(png, other):

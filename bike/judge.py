@@ -49,7 +49,7 @@ def ask(prompt_file, labelled, temperature=0.0, tries=3):
                     name=prompt_file.split(".")[0])
 
 
-def ask_text(prompt, labelled, temperature=0.0, tries=3, schema=None, name="out"):
+def ask_text(prompt, labelled, temperature=0.0, tries=3, schema=None, name="out", raw=False):
     """labelled is [(caption, path), ...]. The caption goes in front of each image as its own
     text block: three bare images in a row and the model loses track of which is which — it
     told us two visibly different drawings were identical."""
@@ -78,6 +78,8 @@ def ask_text(prompt, labelled, temperature=0.0, tries=3, schema=None, name="out"
                 "HTTP-Referer": "https://github.com/ESCRI11/bicycle-rl", "X-Title": "bicycle-rl"})
             with urllib.request.urlopen(req, timeout=180) as r:
                 text = json.load(r)["choices"][0]["message"]["content"]
+            if raw:
+                return text
             m = FENCE.search(text)
             return json.loads(m.group(1) if m else text)
         except Exception as e:                       # parse, HTTP, timeout, malformed body
@@ -113,14 +115,19 @@ def checklist_single(png):
     them. Frontier judges do not need this — it costs 5x the calls, which is free locally.
     """
     items = json.loads((HERE / "prompt" / "judge_items.json").read_text())
-    suffix, qs = items["_suffix"], {k: v for k, v in items.items() if not k.startswith("_")}
+    suffix = items["_suffix"]
+    qs = {k: items[k] for k in items["_active"]}
     out = {}
     for k, q in qs.items():
         # pass the question as text, never through a shared temp file: calibrate runs six
         # threads in one process, they raced on the filename, and the gold bicycle scored
         # 0/5 while the scrambled one scored 3/5 because questions swapped between images
+        # read the answer as text, not JSON. The 32B replies "True" with a capital T,
+        # which json.loads rejects — every item came back false and the model looked blind
+        # when it was answering correctly. Models are not obliged to speak JSON.
         try:
-            yes = ask_text(q + suffix, [("THE DRAWING:", png)]) is True
+            ans = str(ask_text(q + suffix, [("THE DRAWING:", png)], raw=True)).strip()
+            yes = ans.strip('".* ').lower().startswith(("true", "yes"))
         except JudgeUnavailable:
             yes = False
         out[k] = {"yes": yes, "why": q[:40]}
@@ -130,7 +137,9 @@ def checklist_single(png):
 def checklist(png, photo=None):
     if os.environ.get("JUDGE_SINGLE") == "1":
         out = checklist_single(png)
-        out["score"] = sum(bool(out[k]["yes"]) for k in ITEMS)
+        asked = [k for k in out if not k.startswith("_")]
+        out["score"] = sum(bool(out[k]["yes"]) for k in asked)
+        out["_max"] = len(asked)
         return out
     photo = photo or reference_photo(png.name)
     out = ask("judge_checklist.txt",
