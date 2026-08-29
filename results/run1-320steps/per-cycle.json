@@ -1,0 +1,185 @@
+{
+ "steps": 320,
+ "cycles": [
+  {
+   "cycle": "000",
+   "n": 128,
+   "mean_reward": 0.2836,
+   "gate": 0.641,
+   "checklist_mean": 0.0703,
+   "judged_bicycle": 0,
+   "perfect_checklist": 0
+  },
+  {
+   "cycle": "001",
+   "n": 128,
+   "mean_reward": 0.2726,
+   "gate": 0.578,
+   "checklist_mean": 0.0833,
+   "judged_bicycle": 0,
+   "perfect_checklist": 0
+  },
+  {
+   "cycle": "002",
+   "n": 128,
+   "mean_reward": 0.2531,
+   "gate": 0.547,
+   "checklist_mean": 0.0547,
+   "judged_bicycle": 0,
+   "perfect_checklist": 0
+  },
+  {
+   "cycle": "003",
+   "n": 128,
+   "mean_reward": 0.332,
+   "gate": 0.703,
+   "checklist_mean": 0.0729,
+   "judged_bicycle": 0,
+   "perfect_checklist": 0
+  },
+  {
+   "cycle": "004",
+   "n": 128,
+   "mean_reward": 0.3473,
+   "gate": 0.727,
+   "checklist_mean": 0.0963,
+   "judged_bicycle": 0,
+   "perfect_checklist": 0
+  },
+  {
+   "cycle": "005",
+   "n": 128,
+   "mean_reward": 0.3449,
+   "gate": 0.695,
+   "checklist_mean": 0.1171,
+   "judged_bicycle": 0,
+   "perfect_checklist": 0
+  },
+  {
+   "cycle": "006",
+   "n": 128,
+   "mean_reward": 0.3266,
+   "gate": 0.766,
+   "checklist_mean": 0.0755,
+   "judged_bicycle": 0,
+   "perfect_checklist": 0
+  },
+  {
+   "cycle": "007",
+   "n": 128,
+   "mean_reward": 0.3301,
+   "gate": 0.789,
+   "checklist_mean": 0.0911,
+   "judged_bicycle": 0,
+   "perfect_checklist": 0
+  },
+  {
+   "cycle": "008",
+   "n": 128,
+   "mean_reward": 0.3805,
+   "gate": 0.812,
+   "checklist_mean": 0.1145,
+   "judged_bicycle": 0,
+   "perfect_checklist": 1
+  },
+  {
+   "cycle": "009",
+   "n": 128,
+   "mean_reward": 0.3715,
+   "gate": 0.836,
+   "checklist_mean": 0.1041,
+   "judged_bicycle": 0,
+   "perfect_checklist": 0
+  },
+  {
+   "cycle": "010",
+   "n": 128,
+   "mean_reward": 0.3813,
+   "gate": 0.828,
+   "checklist_mean": 0.1223,
+   "judged_bicycle": 0,
+   "perfect_checklist": 0
+  },
+  {
+   "cycle": "011",
+   "n": 128,
+   "mean_reward": 0.3691,
+   "gate": 0.852,
+   "checklist_mean": 0.1406,
+   "judged_bicycle": 0,
+   "perfect_checklist": 2
+  },
+  {
+   "cycle": "012",
+   "n": 128,
+   "mean_reward": 0.3836,
+   "gate": 0.891,
+   "checklist_mean": 0.151,
+   "judged_bicycle": 0,
+   "perfect_checklist": 1
+  },
+  {
+   "cycle": "013",
+   "n": 128,
+   "mean_reward": 0.4145,
+   "gate": 0.914,
+   "checklist_mean": 0.1562,
+   "judged_bicycle": 0,
+   "perfect_checklist": 0
+  },
+  {
+   "cycle": "014",
+   "n": 128,
+   "mean_reward": 0.4355,
+   "gate": 0.898,
+   "checklist_mean": 0.1588,
+   "judged_bicycle": 4,
+   "perfect_checklist": 0
+  },
+  {
+   "cycle": "015",
+   "n": 128,
+   "mean_reward": 0.4344,
+   "gate": 0.938,
+   "checklist_mean": 0.203,
+   "judged_bicycle": 9,
+   "perfect_checklist": 0
+  },
+  {
+   "cycle": "016",
+   "n": 128,
+   "mean_reward": 0.4395,
+   "gate": 0.883,
+   "checklist_mean": 0.19,
+   "judged_bicycle": 7,
+   "perfect_checklist": 0
+  },
+  {
+   "cycle": "017",
+   "n": 128,
+   "mean_reward": 0.4484,
+   "gate": 0.922,
+   "checklist_mean": 0.2134,
+   "judged_bicycle": 9,
+   "perfect_checklist": 3
+  },
+  {
+   "cycle": "018",
+   "n": 128,
+   "mean_reward": 0.4305,
+   "gate": 0.938,
+   "checklist_mean": 0.2291,
+   "judged_bicycle": 7,
+   "perfect_checklist": 0
+  },
+  {
+   "cycle": "019",
+   "n": 128,
+   "mean_reward": 0.4867,
+   "gate": 0.969,
+   "checklist_mean": 0.2551,
+   "judged_bicycle": 9,
+   "perfect_checklist": 0
+  }
+ ]
+}

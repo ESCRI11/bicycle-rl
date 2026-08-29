@@ -19,7 +19,7 @@ wget -q https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.de
 sudo DEBIAN_FRONTEND=noninteractive apt-get install -y -qq /tmp/chrome.deb
 
 pip3 install -q --upgrade pip
-pip3 install -q vllm playwright
+pip3 install -q vllm playwright peft accelerate gepa   # accelerate: transformers needs it for device_map
 python3 -m playwright install chromium
 
 echo

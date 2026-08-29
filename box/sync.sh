@@ -8,5 +8,5 @@ HOST=${1:?usage: sync.sh user@host}
 REPO="$(cd "$(dirname "$0")/.." && pwd)"
 rsync -az --info=stats1 \
   --exclude .git --exclude .venv --exclude out --exclude __pycache__ \
-  --exclude 'gepa-run/run.log' \
+  --exclude runs --exclude 'gepa-run/run.log' \
   "$REPO/" "$HOST:~/bicycle-rl/"
