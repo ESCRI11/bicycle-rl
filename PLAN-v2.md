@@ -120,3 +120,22 @@ the honest version of the story and more useful than a single number.
 | 6 training | ~7 h | one A100 |
 
 Roughly one box-day. The judge costs nothing because it runs on the same card.
+
+## v3 candidate — HPSv3 as a dense component
+
+Dropped in entry 005 on the grounds that a bicycle is judged on structure rather than beauty,
+and that an aesthetic scorer trained on text-to-image generations would be out of
+distribution on sparse ink drawings. The second half of that was an assumption, never tested,
+and two arguments now point the other way:
+
+- **HPS is prompt-conditioned.** It scores (image, prompt), i.e. "how well does this match
+  *a bicycle, side view, ink drawing on off-white paper*" — a recognisability signal, not
+  only an aesthetic one. Humans asked to pick between two bicycles pick the one that looks
+  like a bicycle.
+- **It is dense where our reward is sparse.** The tiered checklist is five binaries and 70%
+  of samples score exactly 0 — that is what made GEPA unsearchable and what keeps the early
+  gradient thin. A continuous score orders the blobs too, which is most of training.
+
+Test it the same way as everything else, before it enters the reward: does it rank the gold
+bicycle above `scrambled`, the ablation rungs in order, and the 24 two-circle rollouts below
+the 6 real bicycles? Ten minutes on the ladder, and it needs a GPU slice alongside the judge.
