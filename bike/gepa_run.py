@@ -11,8 +11,9 @@ The only "instances" are sampling seeds — one fixed user prompt, one fixed can
 candidate is scored by averaging several fresh samples rather than by one lucky draw.
 
 Scoring is reward.py's shape minus the pairwise term (no batch to draw opponents from):
-0.05 renders + 0.05 length band + 0.90 checklist. The checklist runs on Gemini alone here;
-reward.py AND-s two judges, which is twice the money over hundreds of evaluations.
+the expected checklist score per sample: 0 if it does not render, otherwise the tiered
+score from prompt/judge_items.json, where two circles cap at 0.30 and only a frame reaching
+both hubs pays the remaining 0.70.
 
 GEPA's point is the feedback string, not the number: it is what the reflection model reads
 when it rewrites the prompt. Errors and failed checklist items go in verbatim.
@@ -25,7 +26,13 @@ import generate, judge, render, reward
 HERE = pathlib.Path(__file__).parent
 MODEL = os.environ.get("MODEL", "qwen2.5-coder:7b")   # the model that draws
 CHECKLIST_MODEL = "google/gemini-2.5-flash"
-WEIGHTS = {"gate": 0.05, "length": 0.05, "checklist": 0.90}
+# Checklist only. The gate is already inside it — a sketch that does not render scores 0 on
+# every item — so a separate gate term double-counts, and it is the one term GEPA could max
+# by making the prompt ask for less, which is how it would rediscover a prompt that renders
+# reliably and draws nothing. Length never varied (~1.0 on every sample) and is not a
+# component. Pairwise needs opponents and its 16-23% position flips would swamp a prompt
+# difference; it belongs in RL where the group already exists.
+WEIGHTS = {"checklist": 1.0}
 
 # set once, not per call: judge.MODEL is a module global and evaluations run in parallel
 judge.MODEL = CHECKLIST_MODEL
@@ -89,22 +96,25 @@ def _evaluate(candidate, example):
         js.write_text(code)
         png, err = render.render(js, tmp)
 
-        parts = {"gate": 0.0 if err or png is None else 1.0,
-                 "length": reward.length_band(reward.code_len(code)),
-                 "checklist": 0.0}
-        if parts["gate"]:
+        rendered = not (err or png is None)
+        parts = {"checklist": 0.0}
+        if rendered:
             out = judge.checklist(png)
-            parts["checklist"] = out["score"] / len(judge.ITEMS)
-            notes = [f"{k}: {out.get(k, {}).get('why', '?')}"
-                     for k in judge.ITEMS if not out.get(k, {}).get("yes")]
+            parts["checklist"] = out["score"] / out.get("_max", 1.0)
+            asked = [k for k in out if not k.startswith("_") and k != "score"]
+            notes = [f"{k}: {out[k].get('why', '?')}" for k in asked if not out[k].get("yes")]
+            if not out.get("_tier1_complete"):
+                notes.insert(0, "recognition incomplete, so the frame items scored nothing")
         else:
             notes = ["the sketch never drew: " + err]
-        if parts["length"] < 1.0:
+        # reported for the reflection model to read, not scored: length never varied and a
+        # gate term is what would let a candidate win by asking for less
+        if reward.length_band(reward.code_len(code)) < 1.0:
             notes.append(f"code length {reward.code_len(code)} is outside {reward.LO}-{reward.HI}")
 
         score = sum(WEIGHTS[k] * v for k, v in parts.items())
-        return score, {"scores": parts,
-                       "feedback": " | ".join(notes)[:400] or "all five checklist items passed"}
+        return score, {"scores": {**parts, "rendered": float(rendered)},
+                       "feedback": " | ".join(notes)[:400] or "every checklist item passed"}
 
 
 def openrouter_lm(model):

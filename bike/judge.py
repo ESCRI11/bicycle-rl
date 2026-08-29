@@ -116,7 +116,7 @@ def checklist_single(png):
     """
     items = json.loads((HERE / "prompt" / "judge_items.json").read_text())
     suffix = items["_suffix"]
-    qs = {k: items[k] for k in items["_active"]}
+    qs = {k: items[k] for k in items["_tier1"] + items["_tier2"]}
     out = {}
     for k, q in qs.items():
         # pass the question as text, never through a shared temp file: calibrate runs six
@@ -137,9 +137,16 @@ def checklist_single(png):
 def checklist(png, photo=None):
     if os.environ.get("JUDGE_SINGLE") == "1":
         out = checklist_single(png)
-        asked = [k for k in out if not k.startswith("_")]
-        out["score"] = sum(bool(out[k]["yes"]) for k in asked)
-        out["_max"] = len(asked)
+        spec = json.loads((HERE / "prompt" / "judge_items.json").read_text())
+        t1 = [k for k in spec["_tier1"] if out.get(k, {}).get("yes")]
+        # tier 2 is worth 70% of the score and pays nothing until recognition is complete:
+        # two circles side by side caps at 0.30, a framed bicycle reaches 1.00
+        earned = len(t1) * spec["_tier1_each"]
+        if len(t1) == len(spec["_tier1"]):
+            earned += sum(spec["_tier2_each"] for k in spec["_tier2"] if out.get(k, {}).get("yes"))
+        out["score"] = round(earned, 3)
+        out["_max"] = 1.0
+        out["_tier1_complete"] = len(t1) == len(spec["_tier1"])
         return out
     photo = photo or reference_photo(png.name)
     out = ask("judge_checklist.txt",
