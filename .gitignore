@@ -12,3 +12,5 @@ bike/out/
 bike/.render-*.html
 
 bike/photos/*.jpg
+
+runs/

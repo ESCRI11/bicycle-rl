@@ -1180,3 +1180,77 @@ judge them, swap back. ~64 s per step all in, **~5 hours for 300 steps** on the 
 rented, with no API and one machine to manage.
 
 **Next.** Write the training loop and run it.
+
+## 020 — 2026-08-29 — 320 steps of GRPO: from zero bicycles to one in fifteen
+
+**Goal.** The run the whole project was built for: does RL move a 7B on this task?
+
+**Setup.** `qwen2.5-coder:7b` LoRA (r=16, all seven projections, lr 1e-5), GRPO with group 8,
+128 rollouts per cycle, 20 cycles = 320 steps. Judge, policy and renderer all on one rented
+A100 80 GB. **7.0 hours, 21 min per cycle, $0 in API calls.**
+
+The judge holds 68 GB, so it cannot share the card with training. Each cycle therefore runs
+as three separate processes — sample, swap in the judge and score, swap back and update —
+with every artefact on disk between phases. A crash costs one cycle, not the run, and
+`box/pull.sh` mirrored everything to the workstation every two minutes, which is the copy
+that survived the box being killed.
+
+**Numbers. First 16 steps → last 16 steps:**
+
+| | start | end |
+|---|---|---|
+| renders without throwing (gate) | 0.64 | **0.97** |
+| checklist score | 0.070 | **0.255** |
+| mean reward | 0.284 | **0.487** |
+| rollouts earning ≥1 checklist item | 22/128 | **77/128** |
+| rollouts earning 2 of 3 | 5/128 | **21/128** |
+| **judged a bicycle by the vision judge** | **0** | **9/128 (7%)** |
+
+Across all 2,560 rollouts: **7 scored a perfect 3/3 checklist, 5 scored reward 1.000, and
+every one of them came after step 128.** The first 1,024 attempts produced none. In the last
+six cycles, where per-item detail was recorded, **45 of 710 rollouts were judged bicycles**,
+holding steady around 6–7% cycle to cycle rather than spiking once.
+
+![bicycles the judge recognised, drawn by the trained model](bitacora-assets/after-bicycles.png)
+
+Against the baseline — [50 sketches, 0 bicycles](bitacora-assets/baseline-v3.png) — that is
+the result: **a 7B that never drew a bicycle now draws one roughly one time in fifteen.**
+
+**The ladder was climbed in the order it was built.** This is the part worth keeping:
+
+1. **Steps 1–130: stop crashing.** Gate 0.64 → 0.89. The cheapest reward available, and the
+   one that unlocks the other 0.90.
+2. **Steps 60–130: two circles.** Predicted in entry 015 before any training —
+   *"the cheapest way to win the checklist's first item is to draw two big circles… that is
+   not reward hacking, it is the first rung of the ladder we built."* It appeared at step ~65.
+3. **Steps 130–320: close the frame.** The 2-of-3 tier sat flat at 3–5 per 128 for eight
+   cycles, then moved to 7, 8, 9, and finished at 21. The first 3/3 arrived at step 128.
+
+**A false alarm worth recording.** Cycles 0–2 showed gate falling 0.64 → 0.58 → 0.55 and
+reward falling with it. It looked like policy degradation, and a threshold was set: if gate
+were still falling at cycle 5, stop and add a KL anchor. Cycle 3 came back at 0.70 and it
+climbed monotonically from there. **Cycle-to-cycle variance is larger than sampling noise**
+because each batch comes from a policy 16 updates newer — three cycles is not a trend.
+Setting the intervention threshold *before* looking is what stopped a premature rewrite.
+
+**Honest limits.**
+
+- **93% of output is still not a bicycle**, and the ones that work are trapezoid-framed,
+  forkless, chainless. The model learned a silhouette, not a machine.
+- **The judge caps what can be learned.** `steering` and `drivetrain` were dropped because
+  the 72B cannot see a fork or a chain at this line weight (entry 019). A reward cannot
+  teach what it cannot measure, so the absence of forks in the output is not a failure of
+  RL — it is a failure of the judge, faithfully reproduced.
+- Median code length drifted up, 1243 → 1533 chars. The post's model compressed instead. Our
+  length band tops out at 2800 so it never bound, but the direction is worth watching.
+- 320 steps is small. The post ran thousands.
+
+**Numbers on cost.** 7 hours of one A100, no API calls, and $0.14 of OpenRouter spend across
+the entire project's judge calibration. The judge that made it possible —
+`Qwen2.5-VL-72B-AWQ`, calibrated in entry 019 — ran locally on the same card.
+
+**Next.** Everything needed to continue exists in `runs/`: the adapter, the optimiser state,
+2,560 sketches with rewards, 20 sample sheets, and the full step log. The obvious extensions,
+in order of expected value: a judge that can see a fork (frontier API, ~$25 a run) so
+`steering` and `drivetrain` come back; more steps; and a reference pool of good drawings so
+the pairwise term compares against quality rather than against siblings.
