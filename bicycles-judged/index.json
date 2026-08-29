@@ -1,0 +1,146 @@
+[
+ {
+  "n": 1,
+  "source": "cycle 019 / gen_001.js",
+  "reward": 0.9,
+  "items": {
+   "is_bicycle": true,
+   "two_wheels": true,
+   "closed_frame": false
+  },
+  "parts": {
+   "gate": 1.0,
+   "length": 1.0,
+   "checklist": 0.667,
+   "pairwise": 1.0
+  }
+ },
+ {
+  "n": 2,
+  "source": "cycle 019 / gen_002.js",
+  "reward": 0.9,
+  "items": {
+   "is_bicycle": true,
+   "two_wheels": true,
+   "closed_frame": false
+  },
+  "parts": {
+   "gate": 1.0,
+   "length": 1.0,
+   "checklist": 0.667,
+   "pairwise": 1.0
+  }
+ },
+ {
+  "n": 3,
+  "source": "cycle 019 / gen_038.js",
+  "reward": 0.9,
+  "items": {
+   "is_bicycle": true,
+   "two_wheels": true,
+   "closed_frame": false
+  },
+  "parts": {
+   "gate": 1.0,
+   "length": 1.0,
+   "checklist": 0.667,
+   "pairwise": 1.0
+  }
+ },
+ {
+  "n": 4,
+  "source": "cycle 019 / gen_053.js",
+  "reward": 0.9,
+  "items": {
+   "is_bicycle": true,
+   "two_wheels": true,
+   "closed_frame": false
+  },
+  "parts": {
+   "gate": 1.0,
+   "length": 1.0,
+   "checklist": 0.667,
+   "pairwise": 1.0
+  }
+ },
+ {
+  "n": 5,
+  "source": "cycle 019 / gen_087.js",
+  "reward": 0.9,
+  "items": {
+   "is_bicycle": true,
+   "two_wheels": true,
+   "closed_frame": false
+  },
+  "parts": {
+   "gate": 1.0,
+   "length": 1.0,
+   "checklist": 0.667,
+   "pairwise": 1.0
+  }
+ },
+ {
+  "n": 6,
+  "source": "cycle 019 / gen_110.js",
+  "reward": 0.9,
+  "items": {
+   "is_bicycle": true,
+   "two_wheels": true,
+   "closed_frame": false
+  },
+  "parts": {
+   "gate": 1.0,
+   "length": 1.0,
+   "checklist": 0.667,
+   "pairwise": 1.0
+  }
+ },
+ {
+  "n": 7,
+  "source": "cycle 019 / gen_094.js",
+  "reward": 0.6,
+  "items": {
+   "is_bicycle": true,
+   "two_wheels": true,
+   "closed_frame": false
+  },
+  "parts": {
+   "gate": 1.0,
+   "length": 1.0,
+   "checklist": 0.667,
+   "pairwise": 0.5
+  }
+ },
+ {
+  "n": 8,
+  "source": "cycle 019 / gen_105.js",
+  "reward": 0.3,
+  "items": {
+   "is_bicycle": true,
+   "two_wheels": true,
+   "closed_frame": false
+  },
+  "parts": {
+   "gate": 1.0,
+   "length": 1.0,
+   "checklist": 0.667,
+   "pairwise": 0.0
+  }
+ },
+ {
+  "n": 9,
+  "source": "cycle 019 / gen_122.js",
+  "reward": 0.3,
+  "items": {
+   "is_bicycle": true,
+   "two_wheels": true,
+   "closed_frame": false
+  },
+  "parts": {
+   "gate": 1.0,
+   "length": 1.0,
+   "checklist": 0.667,
+   "pairwise": 0.0
+  }
+ }
+]
