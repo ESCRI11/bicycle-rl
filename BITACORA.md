@@ -1254,3 +1254,53 @@ the entire project's judge calibration. The judge that made it possible —
 in order of expected value: a judge that can see a fork (frontier API, ~$25 a run) so
 `steering` and `drivetrain` come back; more steps; and a reference pool of good drawings so
 the pairwise term compares against quality rather than against siblings.
+
+## 021 — 2026-08-29 — Plan v2: describe the bicycle before asking RL to teach it
+
+**Goal.** Decide what a second run should change, and write it down as stages with gates
+rather than as intentions.
+
+**The observation.** The v1 prompt contains 2,633 characters about the p5.brush API and
+**not one word about what a bicycle is**. The model had to infer the composition unaided and
+express it in an unfamiliar library simultaneously. Entry 020 shows where the RL budget went:
+most of 320 steps moved the render gate 0.64 → 0.97 — teaching a model not to crash — and
+structure only began moving at step 130. **Prompt work is the cheap place to buy what RL buys
+expensively.**
+
+**The line, unchanged from entry 017:** knowledge is fair, implementation is not. A verbal
+description of a side-view bicycle is guidance the model must still turn into code; a
+`paint()` skeleton with literal hub coordinates is the answer. `--check-prompt` enforces the
+difference mechanically.
+
+**Did.** `PLAN-v2.md`, seven stages, each gated:
+
+1. draft prompt v2 — done
+2. **local baseline, judged by eye** — 50 samples on this workstation, free, and the user
+   decides from the contact sheet whether RL is even needed
+3. rent a box, re-validate the judge on the ladder
+4. new checklist items, each proven on the ladder first; plus the **crop experiment** — the
+   72B cannot see a fork at full-canvas scale, but VLMs read detail far better zoomed, and
+   if cropping recovers `steering` and `drivetrain` the ceiling rises from silhouette to
+   machine
+5. reference pool from this run's 7 perfect and 49 judged-bicycle rollouts, so pairwise
+   compares against known-good drawings instead of a random sibling
+6. GEPA at 24 instances per candidate — it failed in entry 018 at 4 instances for a measured
+   reason (sem 0.072, needs ~23 to resolve 0.10), which was 30 h on CPU and is 30 min on the
+   A100
+7. warm-start training with the gate demoted to a multiplier, since at 0.97 it no longer
+   needs weight, it needs to be a precondition
+
+**The gate that matters is stage 2, and it is the user's eye.** If prompt v2 already produces
+bicycles, RL becomes optional polish and the honest post is "a small model plus a good
+prompt". That would be a more useful result than it sounds, and finding it out costs 45
+minutes of local CPU and nothing else.
+
+**Dead end, immediately.** The first draft of prompt v2 came out at 3,626 characters and
+**our own anti-smuggling guard rejected it** — the cap is 3,600. The content was legitimate
+prose, not a smuggled implementation, but the rule fired anyway, which is what a mechanical
+guard is for. Tightened the wording to 3,499 rather than raising the cap: a rule that bends
+the first time it is inconvenient is not a rule.
+
+**Next.** Stage 1: 50 samples with prompt v2 on the local ollama, render, contact sheet,
+and compare against `bitacora-assets/baseline-v3.png` — v1's fifty sketches with no bicycle
+among them.
