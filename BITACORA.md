@@ -1304,3 +1304,76 @@ the first time it is inconvenient is not a rule.
 **Next.** Stage 1: 50 samples with prompt v2 on the local ollama, render, contact sheet,
 and compare against `bitacora-assets/baseline-v3.png` — v1's fifty sketches with no bicycle
 among them.
+
+## 022 — 2026-08-29 — Stage 1: the prompt has to teach the subject *and* the library
+
+**Goal.** Stage 1 of `PLAN-v2.md`: does a prompt that describes a bicycle produce bicycles,
+and is RL still needed?
+
+**Did.** Three 50-sample batches from the same local `qwen2.5-coder:7b`, same seeds, only the
+system prompt differing.
+
+- **v1** — the trained-against prompt: 2,633 chars of p5.brush API, not one word about
+  bicycles.
+- **v2.0** — v1 plus a verbal description of a side-view bicycle (equal wheels on one line
+  two and a half radii apart, closed frame meeting both hubs, fork, chainring, chain) and one
+  procedural line: choose the hubs and radius first, derive the rest.
+- **v2.1** — v2.0 rewritten against **every runtime error this project has ever recorded**,
+  466 `.err` files aggregated.
+
+**Numbers.**
+
+| | v1 | v2.0 | **v2.1** |
+|---|---|---|---|
+| renders cleanly | **64%** | 41% | 50% |
+| median code (comments stripped) | 1365 | 1968 | **1312** |
+| attempts a wheel pair | 52% | 82% | **88%** |
+| **renders a wheel pair** | 38% | 35% | **44%** |
+| recognisable bicycles | 0 | 0 | 0 |
+
+![50 sketches from prompt v2.1](bitacora-assets/prompt-v21-batch.png)
+
+**What the error data said.** Ranked, from 466 files: 68 × reading `.x` of undefined — the
+model builds `{x, y}` point objects and misreferences them, *caused by our own "as named
+constants" phrasing*; 53 × `brush.rectangle`, when `brush.rect` is real API we simply never
+listed, so every one of those crashes was ours; 44 × drawing before any `brush.set`;
+36 × `brush.ellipse` for `brush.circle`; 56 × brush names with stray spaces (`' HB'`,
+`'2B HB'`); and a tail of `BLACK`, `BACKGROUND_COLOUR`, field `'wave'` for `'waves'`.
+
+v2.1 grants `brush.rect`, names the exact methods that throw, forbids point objects in favour
+of plain numbers, requires `brush.set` before the first shape, and caps effort — *"keep it
+under 30 brush calls: a clear bicycle beats a detailed one that throws"*. That last line took
+median code from 1968 back to 1312.
+
+**The finding.** Describing the subject nearly doubles the rate at which the model attempts
+the right composition, 52% → 88%. Describing the subject *without* fixing the API costs more
+reliability than it buys — v2.0's 41% gate. **Both halves are needed, and the second is
+mechanical: mine your own error logs.**
+
+**Stage-1 gate, answered.** Prompt guidance alone does not produce bicycles: a handful of
+near-misses in fifty, no more. **RL is still needed**, and v2.1 is the better starting point
+despite its lower gate, because the last run measured what RL is good at — it took the gate
+0.64 → 0.97 in 320 steps — and what it is bad at, inventing structure from nothing. Start
+where structure is attempted 88% of the time and let RL repair the crashes.
+
+**Dead ends and corrections.**
+
+- **The wheel-pair metric was biased by the change it was measuring.** It required a numeric
+  literal radius, while v2.1 tells the model to use a named constant, so
+  `brush.circle(RHX, RHY, R, false)` never matched. First reading said structural intent
+  *fell* under v2.x. It had nearly doubled. The metric now accepts an identifier as a radius.
+- **Reading v2.0's low gate as "the guidance hurt"** was wrong in the same way: the guidance
+  worked and the reliability failed, separately and fixably.
+- **v2.1 did not fit our own 3,600-char anti-smuggling cap** and cost the worked example to
+  get under it. Raising the cap was rejected: at 5,000 characters a coordinate skeleton fits
+  without ever writing `function paint`, and that guard is what stopped GEPA smuggling the
+  answer in entry 017.
+- **`out/baseline-v2` was an existing archive** from 26 Aug and a new batch began overwriting
+  it before it was caught. One file lost; the batch's prompt record restored from commit
+  `2cbce54`. "v2" meant two different things three days apart — name batches for what they
+  are, not for which iteration you are on.
+
+**Next.** Stage 5, brought forward: GEPA on prompt v2.1 with the same anti-smuggling
+constraints, 24 instances per candidate on a GPU box, metric = gate + checklist. The
+constraints are exactly what makes this worth doing — improve the wording, never introduce
+coordinates.
