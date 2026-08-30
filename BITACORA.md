@@ -1514,3 +1514,93 @@ to the local judge), and now a collapse that was a prompt mismatch. **Five for f
 habit that catches them is checking a surprising number against something already known.
 
 **Next.** Re-run gate 0 against the correct prompt, then gate 1, then train.
+
+---
+
+## 025 — 2026-08-30 — Both gates pass, the cycle gets a stopwatch, and a sync clobbers the start
+
+**Gate 0 — is there anything left to warm-start from?** The collapse test compares how often
+a sample calls `brush.fill` (the paint verb, as opposed to bare ink):
+
+| model | temp 1.0 | temp 1.2 |
+|---|---|---|
+| base Qwen2.5-Coder-7B | 41/50 | — |
+| run 2 adapter | 1/50 | 0/50 |
+
+Raising the temperature did not bring it back, which is the difference between a policy that
+has gone quiet and one that has lost the behaviour. **Extinct — v3 starts from the base
+model.** Run 2 optimised a reward with no colour term in it, and it got exactly what it was
+asked for: a reward that never mentioned paint bought structure by spending the paint.
+
+That decision cost something. Cycle 9 of run 2 (77/128 still painting) would have been an
+ideal warm start, but only the final adapter survived; every cycle overwrote the last.
+`update.py` now writes `run/checkpoints/step_NNNN` every `CHECKPOINT_EVERY` (5) cycles. One
+line, and it buys back the ability to restart from the middle of a run instead of the end.
+
+**Gate 1 — does HPSv3 order our ladder?** Same ablation rungs as the judge calibration:
+
+```
+gold bicycle photo   6.942        drawn bicycles  -3.271
+no-frame rung       -0.563        two circles     -5.156
+```
+
+Ordered, and the gap between a drawing and two circles (1.9 points) is the signal we want it
+to pay for. One gate as written appeared to *prefer* bare ink — cycle 0 (-6.394) above cycle
+19 (-5.233) — but those batches differ in structure as well as colour, so the comparison was
+confounded. Rerun on one fixed gold bicycle with the colour stripped: **6.942 with colour,
+2.605 without. Colour is worth +4.3 points.** HPS enters the reward at 0.25, min-max
+normalised inside each GRPO group.
+
+**HPSv3 is a 7B model that wants 64 GB.** Measured, because the number looked wrong:
+
+```
+after model load      39,535 MiB
+peak while scoring    63,847 MiB    (128 images, HPS_BATCH=2)
+```
+
+It loads in fp32. The judge holds 46 GB and the card is 80, so the two cannot overlap — the
+first draft, which scored HPS inside `score.py` while the judge server was live, would have
+OOMed on its first real cycle. It is also *fast*: 0.16 s an image, 44 s for a cycle. So the
+fix is sequencing, not squeezing: `score.py --hps-only` reopens `rewards.json` after the
+judge shuts down, adds the term, recomputes the reward. Cheaper than casting to bf16 and
+nothing to re-validate.
+
+**The scoring cycle, timed** (A100 80GB, 128 rollouts):
+
+| phase | time |
+|---|---|
+| rollout | 3 m 39 s |
+| judge boot (72B-AWQ) | 2 m 50 s |
+| checklist + pairwise | 7 m 00 s |
+| HPS, alone | 44 s |
+| GRPO update, 16 steps | 1 m 38 s |
+| **cycle** | **15 m 50 s** |
+
+20 cycles ≈ 5 h 20 m, which is the number the box rental has to cover. The judge boots and
+dies every cycle — 57 minutes of the run is vLLM loading weights. Keeping it resident would
+need it to share the card with training, and a cycle lost to OOM costs more than the boot.
+
+**The dead end: a finished run's state came up with the repo.** `sync.sh` pushed the working
+tree to a fresh box, `bike/run/` came with it, and the loop read run 2's `state.json` —
+so it announced `=== cycle 20` and sampled from `run/lora`, the adapter gate 0 had *just*
+declared collapsed. Caught in the first 20 seconds of log, by the cycle number being wrong.
+
+Two things made it invisible. `sync.sh` excludes `.git`, so `git log` on the box fails with
+*not a git repository* — which reads as "the repo is gone" when it means "the repo is here
+without its history". And `ls ~ | tail -20` hid `bicycle-rl` behind the alphabet. I concluded
+the box had been wiped and re-synced onto a directory that was fine.
+
+Fixed at the root: `run` is now excluded from `sync.sh` and gitignored. Run state belongs to
+a box, never to the tree. Moved aside on the box (`~/run2-carryover/`) rather than deleted —
+`lora`, `opt.pt`, `state.json`, `log.jsonl`.
+
+**Launched.** 20 cycles × 128 rollouts from base, reward
+`{gate 0.05, length 0.05, checklist 0.45, pairwise 0.20, hps 0.25}`.
+
+```
+cd ~/bicycle-rl/bike && setsid nohup ./train/loop.sh 20 128 > ~/train.log 2>&1 &
+```
+
+Cycle 0 opened at gate 0.625, checklist 0.106, reward mean 0.28 — against run 2's cycle 0 at
+gate 0.383. Same prompt, same base model; the difference is that HPS pays for the paint that
+run 2 spent.
