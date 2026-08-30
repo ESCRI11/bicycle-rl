@@ -138,15 +138,16 @@ def checklist(png, photo=None):
     if os.environ.get("JUDGE_SINGLE") == "1":
         out = checklist_single(png)
         spec = json.loads((HERE / "prompt" / "judge_items.json").read_text())
-        t1 = [k for k in spec["_tier1"] if out.get(k, {}).get("yes")]
-        # tier 2 is worth 70% of the score and pays nothing until recognition is complete:
-        # two circles side by side caps at 0.30, a framed bicycle reaches 1.00
-        earned = len(t1) * spec["_tier1_each"]
-        if len(t1) == len(spec["_tier1"]):
+        earned = sum(spec["_tier1_each"] for k in spec["_tier1"] if out.get(k, {}).get("yes"))
+        # tier 2 carries 70% of the score and unlocks on recognition only — is_bicycle and
+        # two_wheels. Gating it on wheels_apart as well scored real framed bicycles at 0.20
+        # because their wheels touch. Two circles still cap at 0.30: they have no frame.
+        unlocked = all(out.get(k, {}).get("yes") for k in spec["_tier2_requires"])
+        if unlocked:
             earned += sum(spec["_tier2_each"] for k in spec["_tier2"] if out.get(k, {}).get("yes"))
         out["score"] = round(earned, 3)
         out["_max"] = 1.0
-        out["_tier1_complete"] = len(t1) == len(spec["_tier1"])
+        out["_tier1_complete"] = unlocked
         return out
     photo = photo or reference_photo(png.name)
     out = ask("judge_checklist.txt",

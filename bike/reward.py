@@ -25,7 +25,13 @@ import judge
 CHECKLIST_MODELS = tuple(os.environ.get(
     "CHECKLIST_MODELS", "google/gemini-2.5-flash,anthropic/claude-sonnet-5").split(","))
 PAIRWISE_MODEL = os.environ.get("PAIRWISE_MODEL", "anthropic/claude-sonnet-5")
-WEIGHTS = {"gate": 0.05, "length": 0.05, "checklist": 0.30, "pairwise": 0.60}
+# Rebalanced after the 320-step run. Pairwise was 0.60 and it is what paid for two circles:
+# a rollout only has to beat a sibling, and when every sibling is bad "less bad" wins. The
+# tiered checklist is now the discriminating signal — validated at 2.9x separation between
+# real bicycles and the two-circle local optimum — so it carries the weight, and pairwise
+# drops to a tiebreaker. Gate stays small: it is already implicit in the checklist, and the
+# last run took it 0.64 -> 0.97 without needing a large share.
+WEIGHTS = {"gate": 0.05, "length": 0.05, "checklist": 0.55, "pairwise": 0.35}
 LO, HI = 300, 2800            # the gold reference is 2676 code chars: the band must not punish it
 
 

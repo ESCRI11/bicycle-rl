@@ -1,22 +1,28 @@
 {
-  "_comment": "One question per call (JUDGE_SINGLE=1). Two tiers: tier 2 counts ONLY if every tier-1 item passed. The 320-step run converged on two circles because two circles scored 2/3 under a flat checklist — recognition was cheap and structure was optional. Putting 70% of the value behind a frame that reaches both hubs is what stops that.",
-
-  "_tier1": ["is_bicycle", "two_wheels", "wheels_apart"],
-  "_tier2": ["frame_spans", "closed_frame"],
-  "_tier1_each": 0.10,
+  "_comment": "One question per call (JUDGE_SINGLE=1). Tier 2 unlocks on two_wheels alone. Gating it on is_bicycle as well withheld the frame's value from 82 of the 98 rollouts that actually drew one — 84% of the model's structural progress was invisible to the reward — because is_bicycle is the fuzziest item and was acting as a veto. Two circles are still capped at 0.30: that cap comes from having no frame, not from the gate.",
+  "_tier1": [
+    "is_bicycle",
+    "two_wheels",
+    "wheels_apart"
+  ],
+  "_tier2": [
+    "frame_spans",
+    "closed_frame"
+  ],
+  "_tier1_each": 0.1,
   "_tier2_each": 0.35,
-
   "_suffix": " Reply with only the word true or the word false.",
-
-  "is_bicycle": "Would someone glancing at this drawing say it is a bicycle? Answer false if it is only circles, blobs or abstract shapes.",
-  "two_wheels": "Does this drawing show exactly two wheel-like round shapes, both fully drawn?",
-  "wheels_apart": "Are the two wheels clearly separated with a gap between them, neither touching nor overlapping?",
-  "frame_spans": "Do straight drawn lines join the two wheels to each other, meeting them at or near their centres?",
-  "closed_frame": "Do the straight lines between the wheels form a closed shape with no gaps?",
-
   "_retired": {
     "equal_wheels": "always true — passed the wheels-unequal rung too",
     "steering": "always false — the judge cannot see a fork even on the gold bicycle",
     "drivetrain": "always false — cannot see a chain either"
-  }
+  },
+  "_tier2_requires": [
+    "two_wheels"
+  ],
+  "is_bicycle": "Would someone glancing at this drawing say it is a bicycle? Answer false if it is only circles, blobs or abstract shapes.",
+  "two_wheels": "Does this drawing show exactly two wheel-like round shapes, both fully drawn?",
+  "wheels_apart": "Are the two wheels clearly separated with a gap between them, neither touching nor overlapping?",
+  "frame_spans": "Do straight drawn lines join the two wheels to each other, meeting them at or near their centres?",
+  "closed_frame": "Do the straight lines between the wheels form a closed shape with no gaps?"
 }

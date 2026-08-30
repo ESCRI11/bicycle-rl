@@ -47,7 +47,11 @@ def _render_playwright(page: pathlib.Path, png: pathlib.Path) -> str:
 def render(js: pathlib.Path, out_dir: pathlib.Path) -> tuple[pathlib.Path, str]:
     syntax = subprocess.run(["node", "--check", js], capture_output=True, text=True)
     if syntax.returncode:
-        return None, syntax.stderr.strip().splitlines()[-1][:200]
+        # node --check prints  path / offending line / caret / "SyntaxError: ..." / stack.
+        # The last line is a stack frame; the useful one names the error.
+        lines = [l.strip() for l in syntax.stderr.strip().splitlines() if l.strip()]
+        msg = next((l for l in lines if "Error" in l), lines[-1] if lines else "syntax error")
+        return None, msg[:200]
 
     page = HERE / f".render-{js.stem}.html"      # next to lib/, so relative paths resolve
     page.write_text((HERE / "template.html").read_text()

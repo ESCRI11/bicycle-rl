@@ -26,13 +26,17 @@ import generate, judge, render, reward
 HERE = pathlib.Path(__file__).parent
 MODEL = os.environ.get("MODEL", "qwen2.5-coder:7b")   # the model that draws
 CHECKLIST_MODEL = "google/gemini-2.5-flash"
-# Checklist only. The gate is already inside it — a sketch that does not render scores 0 on
-# every item — so a separate gate term double-counts, and it is the one term GEPA could max
-# by making the prompt ask for less, which is how it would rediscover a prompt that renders
-# reliably and draws nothing. Length never varied (~1.0 on every sample) and is not a
-# component. Pairwise needs opponents and its 16-23% position flips would swamp a prompt
-# difference; it belongs in RL where the group already exists.
-WEIGHTS = {"checklist": 1.0}
+# Checklist-only was the principled choice — the gate is implicit, since a sketch that does
+# not render scores 0 on every item — but it is unsearchable at this capability level.
+# Measured: prompt v2.1 scores mean 0.035 on the tiered checklist, 70% of samples exactly 0.
+# GEPA filters mutations on a 2-3 instance subsample, so those comparisons come out 0 vs 0,
+# nothing is ever promoted, and six iterations sat at 0.0 proposing nothing.
+#
+# So the gate comes back at 0.3 to give the subsample filter something that varies. The
+# known risk is that GEPA wins by making the prompt ask for less; the guard is mechanical
+# and applied after the run: the winner's wheel-pair attempt rate must not fall below the
+# seed's 88%, or it is rejected whatever it scored.
+WEIGHTS = {"gate": 0.3, "checklist": 0.7}
 
 # set once, not per call: judge.MODEL is a module global and evaluations run in parallel
 judge.MODEL = CHECKLIST_MODEL
@@ -97,14 +101,24 @@ def _evaluate(candidate, example):
         png, err = render.render(js, tmp)
 
         rendered = not (err or png is None)
-        parts = {"checklist": 0.0}
+        parts = {"gate": 1.0 if rendered else 0.0, "checklist": 0.0}
         if rendered:
             out = judge.checklist(png)
             parts["checklist"] = out["score"] / out.get("_max", 1.0)
             asked = [k for k in out if not k.startswith("_") and k != "score"]
-            notes = [f"{k}: {out[k].get('why', '?')}" for k in asked if not out[k].get("yes")]
+            failed = [k for k in asked if not out[k].get("yes")]
+            passed = [k for k in asked if out[k].get("yes")]
+            # name the items, do not echo the questions: in single-question mode the judge
+            # answers true/false only, so the stored "why" is the question text itself and
+            # feeding that to the reflection model is feeding it noise
+            notes = []
+            if failed:
+                notes.append("the judge said NO to: " + ", ".join(failed))
+            if passed:
+                notes.append("yes to: " + ", ".join(passed))
             if not out.get("_tier1_complete"):
-                notes.insert(0, "recognition incomplete, so the frame items scored nothing")
+                notes.append("not recognised as a bicycle with two wheels, so the frame "
+                             "items scored nothing at all")
         else:
             notes = ["the sketch never drew: " + err]
         # reported for the reflection model to read, not scored: length never varied and a
@@ -113,17 +127,21 @@ def _evaluate(candidate, example):
             notes.append(f"code length {reward.code_len(code)} is outside {reward.LO}-{reward.HI}")
 
         score = sum(WEIGHTS[k] * v for k, v in parts.items())
-        return score, {"scores": {**parts, "rendered": float(rendered)},
+        return score, {"scores": parts,
                        "feedback": " | ".join(notes)[:400] or "every checklist item passed"}
 
 
 def openrouter_lm(model):
     """GEPA accepts any (str | list[dict]) -> str callable as reflection_lm, so we skip
     litellm — the same urllib call judge.py already makes."""
+    # NOT judge.URL: the judge now runs locally, and reflection asked a Qwen server for
+    # anthropic/claude-sonnet-5 and got a 404 every iteration
+    url = "https://openrouter.ai/api/v1/chat/completions"
+
     def call(prompt):
         msgs = prompt if isinstance(prompt, list) else [{"role": "user", "content": prompt}]
         body = json.dumps({"model": model, "messages": msgs}).encode()
-        req = urllib.request.Request(judge.URL, data=body, headers={
+        req = urllib.request.Request(url, data=body, headers={
             "Content-Type": "application/json",
             "Authorization": "Bearer " + os.environ["OPENROUTER_API_KEY"],
             "HTTP-Referer": "https://github.com/ESCRI11/bicycle-rl", "X-Title": "bicycle-rl"})
@@ -150,6 +168,7 @@ def main():
     ap.add_argument("--train", type=int, default=8, help="samples averaged per candidate")
     ap.add_argument("--val", type=int, default=4)
     ap.add_argument("--max-metric-calls", type=int, default=150)
+    ap.add_argument("--workers", type=int, default=8, help="2 for CPU ollama, 8 for vLLM")
     # reflection, not judging, was 4/5 of the first run's $1.40: it reads every failure
     # trace and writes a whole replacement prompt each iteration. Flash is ~8x cheaper.
     ap.add_argument("--reflection-lm", default="google/gemini-2.5-flash")
@@ -185,9 +204,11 @@ def main():
         seed_candidate=seed, evaluator=evaluate, dataset=trainset, valset=valset,
         objective=OBJECTIVE, background=BACKGROUND,
         config=GEPAConfig(
-            # max_workers 2: ollama on CPU is the bottleneck, more threads just queue
+            # workers: 2 was right against ollama on CPU, where more threads only queued.
+            # Against vLLM on a GPU the requests batch, so concurrency is nearly free — 8
+            # cuts a 600-call run from ~2.5h to well under an hour.
             # display_progress_bar would need tqdm; gepa ships with no dependencies at all
-            engine=EngineConfig(max_metric_calls=a.max_metric_calls, max_workers=2),
+            engine=EngineConfig(max_metric_calls=a.max_metric_calls, max_workers=a.workers),
             reflection=ReflectionConfig(reflection_lm=openrouter_lm(a.reflection_lm))))
 
     a.out.parent.mkdir(parents=True, exist_ok=True)

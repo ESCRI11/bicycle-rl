@@ -1377,3 +1377,69 @@ where structure is attempted 88% of the time and let RL repair the crashes.
 constraints, 24 instances per candidate on a GPU box, metric = gate + checklist. The
 constraints are exactly what makes this worth doing — improve the wording, never introduce
 coordinates.
+
+## 023 — 2026-08-30 — Run 2: 72% of a batch judged bicycles
+
+**Goal.** Train again with everything the first run taught us: a prompt that describes a
+bicycle, a checklist that cannot be satisfied by two circles, and a reward validated before
+a single GPU hour was spent.
+
+**Numbers — 320 steps, same shape of run as before.**
+
+| | run 1 | **run 2** |
+|---|---|---|
+| prompt | v1, no bicycle description | v2.1, written against 466 error logs |
+| checklist | flat, two circles scored 2/3 | tiered, two circles capped at 0.30 |
+| reward weights | pairwise 0.60 | checklist 0.55, pairwise 0.35 |
+| reward validated first | no | yes — 2.9x separation on real data |
+| reward, start → end | 0.284 → 0.487 | **0.152 → 0.572** |
+| gate | 0.64 → 0.97 | **0.38 → 0.98** |
+| checklist | 0.070 → 0.255 | **0.043 → 0.544** |
+| judged a bicycle | ~6% at the end | **72% in the final cycle (92/128)** |
+| all five checklist items | 7 in 2560 | **64 in 1974** |
+
+![the final cycle's bicycles](bitacora-assets/run2-final-bicycles.png)
+
+Those are bicycles: two equal wheels apart, a closed frame spanning them, saddles and
+handlebars. Against a baseline of **0 in 50**, the final cycle judged **92 of 128**.
+
+**What made the difference.** Three changes, and the evidence says the middle one mattered
+most:
+
+1. **A prompt that describes the subject** — 91% of cycle-0 rollouts already attempted a
+   wheel pair, against 49% in run 1. RL started from a population that was trying.
+2. **A checklist that cannot be satisfied by two circles.** Run 1 paid 0.67 for two circles
+   and the model, correctly, drew two circles for 320 steps. Capping that at 0.30 and putting
+   70% of the value behind a frame is what moved the checklist from 0.255 to 0.544.
+3. **Validating the reward before training.** Three gates, and the first version failed two
+   of them — including one where a genuinely framed bicycle scored 0.20 because its wheels
+   touched.
+
+**The mid-run fix, recorded honestly.** At step ~100 the tier-2 gate required `is_bicycle`
+AND `two_wheels`. Measuring on live data showed **82 of the 98 rollouts that had actually
+drawn a frame were paid nothing for it** — the fuzziest item was acting as a veto over the
+countable ones. Gating on `two_wheels` alone left the two-circle cap untouched (164 no-frame
+rollouts scored identically) while paying 65% more for drawings with a frame. The reward
+therefore changed at step ~100 and the curve has a small discontinuity there; cycles 6-7 are
+where it steepens, immediately after.
+
+**The colour died, and that is our fault.**
+
+| | cycle 0 | cycle 9 | cycle 19 |
+|---|---|---|---|
+| distinct hex colours per sketch | 3.6 | 3.4 | **0.9** |
+| uses `brush.fill` | 115/128 | 77/128 | **4/128** |
+| median code | 1538 | 796 | **698** |
+
+The model dropped the watercolour washes entirely and converged on bare ink line drawings,
+because **nothing in the reward pays for colour**. Every component is structural. It also
+halved its code length, which is the compression the original post saw — winning sketches do
+not need verbose code.
+
+This is precisely the HPSv3 gap noted a day earlier: an aesthetic term is what would have
+kept the painting. The user's instinct — *"humans prefer bikes that look like bikes rather
+than blobs"* — is right, and the converse now has evidence: a reward that only measures
+structure produces structure and nothing else. **v3 gets an aesthetic component, tested on
+the ladder first.**
+
+**Next.** Final eval batch, the before/after figure, and the adapter mirrored home.
