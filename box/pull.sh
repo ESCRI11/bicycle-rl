@@ -22,7 +22,7 @@ if [ "$have" -gt 0 ]; then
 fi
 
 while true; do
-  if rsync -az --exclude '*/tokens.pt' "$HOST:~/bicycle-rl/bike/run/" "$DEST/" 2>/dev/null; then
+  if rsync -az --exclude '*/tokens.pt' --exclude 'checkpoints/*/optimizer*' "$HOST:~/bicycle-rl/bike/run/" "$DEST/" 2>/dev/null; then
     n=$(ls "$DEST/samples" 2>/dev/null | wc -l)
     s=$(python3 -c "import json;print(json.load(open('$DEST/state.json'))['step'])" 2>/dev/null || echo ?)
     echo "$(date +%H:%M:%S) pulled: step $s, $n sample sheets -> $DEST"

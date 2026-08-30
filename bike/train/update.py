@@ -8,7 +8,7 @@ guards against the degenerate long/short collapse.
 
 Adapter and optimiser state live on disk between cycles, so killing the box costs one cycle.
 """
-import argparse, json, pathlib, statistics, sys, torch
+import argparse, json, os, pathlib, statistics, sys, torch
 from transformers import AutoModelForCausalLM, AutoTokenizer
 
 BASE = "Qwen/Qwen2.5-Coder-7B-Instruct"
@@ -83,6 +83,15 @@ def main():
 
     model.save_pretrained(str(lora_dir))
     torch.save(opt.state_dict(), opt_path)
+    # keep a periodic snapshot, not just the latest. Run 2 drove colour to extinction by the
+    # end (1/50 sampling brush.fill against the base model's 41/50) and an earlier checkpoint
+    # — cycle 9 still painted in 77/128 — would have been a warm start worth having. The
+    # final adapter was the only one saved, so that option did not exist.
+    every = int(os.environ.get("CHECKPOINT_EVERY", "5"))
+    if every and (state["step"] // 16) % every == 0:
+        snap = a.run / "checkpoints" / f"step_{state['step']:04d}"
+        model.save_pretrained(str(snap))
+        print(f"checkpoint -> {snap}")
     (a.run / "state.json").write_text(json.dumps(state) + "\n")
     print(f"step {state['step']} -> {lora_dir}")
 
