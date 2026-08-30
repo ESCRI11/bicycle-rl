@@ -19,7 +19,10 @@ wget -q https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.de
 sudo DEBIAN_FRONTEND=noninteractive apt-get install -y -qq /tmp/chrome.deb
 
 pip3 install -q --upgrade pip
-pip3 install -q vllm playwright peft accelerate gepa   # accelerate: transformers needs it for device_map
+pip3 install -q vllm playwright peft accelerate gepa hpsv3
+# accelerate: transformers needs it for device_map. hpsv3: the aesthetic reward component,
+# a 7B Qwen2-VL that scores (image, prompt) human preference — ~16GB, sits beside the judge
+# during scoring but not during training.
 python3 -m playwright install chromium
 
 echo
