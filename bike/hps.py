@@ -25,25 +25,38 @@ _PROC = None
 def _worker():
     global _PROC
     if _PROC is None or _PROC.poll() is not None:
+        # stderr is left attached to ours: the worker's chatter is visible but out of the
+        # protocol, and a crash shows up as output rather than a silent hang
         _PROC = subprocess.Popen([HPS_PYTHON, str(HERE / "hps_worker.py")],
-                                 stdin=subprocess.PIPE, stdout=subprocess.PIPE, text=True)
+                                 stdin=subprocess.PIPE, stdout=subprocess.PIPE, text=True,
+                                 env={**os.environ, "MPLCONFIGDIR": "/tmp/mpl"})
     return _PROC
 
 
 def score(paths, prompt=None):
     """mu for each image. The prompt matters — HPS scores (image, prompt) alignment as well
     as quality, which is why it can reward 'looks like the bicycle we asked for'."""
-    paths = [str(p) for p in paths]
+    # absolute: hpsv3 opens the path itself and does not resolve it against our cwd
+    paths = [str(pathlib.Path(p).resolve()) for p in paths]
     prompt = prompt or (HERE / "prompt/user.txt").read_text().strip()
     if not paths:
         return []
+    # chunk: HPSv3 is a Qwen2-VL and a 700x700 sketch becomes a lot of visual tokens, so a
+    # ten-image call allocated 78GB and died. Four at a time is comfortable on an 80GB card.
+    batch = int(os.environ.get("HPS_BATCH", "4"))
+    out = []
     w = _worker()
-    w.stdin.write(json.dumps({"paths": paths, "prompt": prompt}) + "\n")
-    w.stdin.flush()
-    line = w.stdout.readline()
-    if not line:
-        raise RuntimeError(f"hps worker died — check {HPS_PYTHON} and hpsv3 install")
-    return json.loads(line)["scores"]
+    for i in range(0, len(paths), batch):
+        w.stdin.write(json.dumps({"paths": paths[i:i + batch], "prompt": prompt}) + "\n")
+        w.stdin.flush()
+        line = w.stdout.readline()
+        if not line:
+            raise RuntimeError(f"hps worker died — check {HPS_PYTHON} and hpsv3 install")
+        reply = json.loads(line)
+        if "error" in reply:
+            raise RuntimeError("hps worker: " + reply["error"])
+        out += reply["scores"]
+    return out
 
 
 def main():

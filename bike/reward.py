@@ -31,7 +31,12 @@ PAIRWISE_MODEL = os.environ.get("PAIRWISE_MODEL", "anthropic/claude-sonnet-5")
 # real bicycles and the two-circle local optimum — so it carries the weight, and pairwise
 # drops to a tiebreaker. Gate stays small: it is already implicit in the checklist, and the
 # last run took it 0.64 -> 0.97 without needing a large share.
-WEIGHTS = {"gate": 0.05, "length": 0.05, "checklist": 0.55, "pairwise": 0.35}
+# v3 adds HPSv3, the aesthetic component. Validated on the ladder: it orders the structural
+# ablations better than either VLM judge, prefers real bicycles to two circles, and — with
+# structure held constant, the same gold bicycle with and without its washes — scores the
+# coloured version 6.94 against 2.61. It wants structure first and colour second, which is
+# the priority we want, and it is continuous where the checklist is 70% exact zeros.
+WEIGHTS = {"gate": 0.05, "length": 0.05, "checklist": 0.45, "pairwise": 0.20, "hps": 0.25}
 LO, HI = 300, 2800            # the gold reference is 2676 code chars: the band must not punish it
 
 

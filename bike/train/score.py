@@ -1,11 +1,12 @@
 #!/usr/bin/env python3
 """Phase 2: render every sketch and score it. Needs the judge server up, not the policy."""
-import argparse, json, pathlib, random, sys
+import argparse, json, os, pathlib, random, sys
 from concurrent.futures import ThreadPoolExecutor
 
 HERE = pathlib.Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(HERE))
 import judge, render, reward
+HPS = os.environ.get("USE_HPS", "1") == "1"
 
 
 def main():
@@ -26,7 +27,7 @@ def main():
         png, err = p.with_suffix(".png"), p.with_suffix(".err")
         parts = {"gate": 1.0 if png.exists() and not err.exists() else 0.0,
                  "length": reward.length_band(reward.code_len(p.read_text())),
-                 "checklist": 0.0, "pairwise": 0.0}
+                 "checklist": 0.0, "pairwise": 0.0, "hps": 0.0}
         items = {}
         if parts["gate"]:
             out = judge.checklist(png)
@@ -46,6 +47,28 @@ def main():
 
     with ThreadPoolExecutor(max_workers=a.workers) as pool:
         rows = list(pool.map(score, enumerate(js)))
+
+    if HPS:
+        # HPS scores are unbounded reals (roughly -8..+7 here), so they are min-max scaled
+        # inside each GRPO group — the group is the comparison GRPO actually makes, and it
+        # keeps one wild sample from dominating the batch
+        import hps
+        rendered = [(i, r) for i, r in enumerate(rows) if r["parts"]["gate"]]
+        if rendered:
+            scores = hps.score([a.dir / rows[i]["file"].replace(".js", ".png") for i, _ in rendered])
+            for (i, _), v in zip(rendered, scores):
+                rows[i]["hps_raw"] = round(v, 3)
+            for g0 in range(0, len(rows), a.group):
+                grp = [r for r in rows[g0:g0 + a.group] if "hps_raw" in r]
+                if len(grp) < 2:
+                    for r in grp:
+                        r["parts"]["hps"] = 0.5
+                    continue
+                lo = min(r["hps_raw"] for r in grp); hi = max(r["hps_raw"] for r in grp)
+                for r in grp:
+                    r["parts"]["hps"] = round((r["hps_raw"] - lo) / (hi - lo), 3) if hi > lo else 0.5
+            for r in rows:
+                r["reward"] = round(sum(reward.WEIGHTS[k] * v for k, v in r["parts"].items()), 4)
 
     (a.dir / "rewards.json").write_text(json.dumps(rows, indent=1) + "\n")
     r = [x["reward"] for x in rows]
