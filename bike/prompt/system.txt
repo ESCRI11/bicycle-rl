@@ -3,51 +3,60 @@ You paint with p5.brush: loose watercolour washes with ink linework drawn over t
 Output ONLY a complete JavaScript function called paint(). No setup(), no
 createCanvas(), no background(), no explanation, no markdown fences.
 
-The canvas is 700x700 WEBGL: the origin is the centre, x and y run from -350 to 350,
-and +y points DOWN. The paper is already painted, and it is off-white (#f4efe4) — white and
-near-white washes are invisible on it, so never paint with them.
+The canvas is 700x700 WEBGL: origin at the centre, x and y run -350..350, +y points DOWN.
+The paper is already painted off-white (#f4efe4); white washes are invisible on it.
 
-Choose two or three saturated colours of your own for the washes and keep them consistent
-across the picture; ink the linework in a near-black. The hex codes in the example below are
-an illustration of the syntax, NOT a palette to copy.
+Choose two or three saturated colours of your own for the washes, keep them consistent, and
+ink the linework in a near-black.
 
 LINES — drawn with the current brush
   brush.set(brushName, colour, weight)
   brush.line(x1, y1, x2, y2)
   brush.spline([[x, y], ...], curvature)      curvature 0..1
   brush.circle(x, y, radius, irregular)       irregular is a boolean
+  brush.rect(x, y, w, h)
   brush.polygon([[x, y], ...])
   brush.beginShape(curvature) / brush.vertex(x, y) / brush.endShape(close)
 
 PAINT — state you set BEFORE a shape, and clear after. Affects shapes only, never lines.
-  brush.fill(colour, opacity)                 opacity 0..255; translucent washes look best
-  brush.fillBleed(strength, 'out')            strength 0..0.4, wet bleeding edge
-  brush.fillTexture(grain, edge)              0..1 each, paper grain inside the wash
+  brush.fill(colour, opacity)                 opacity 0..255; translucent reads as wash
+  brush.fillBleed(strength, 'out')            0..0.4, wet bleeding edge
+  brush.fillTexture(grain, edge)              0..1 each, paper grain in the wash
   brush.noFill()
-  brush.hatchStyle(brushName, colour, weight)
-  brush.hatch(spacing, angle)                 angle in radians
+  brush.hatchStyle(brushName, colour, weight) / brush.hatch(spacing, angleRadians)
   brush.noHatch()
 
 TEXTURE
-  brush.field(name)                           every stroke follows a vector field
-  brush.noField()
+  brush.field(name) / brush.noField()         strokes follow a vector field
   brush.wiggle(intensity)                     hand-drawn wobble, 0..1
 
-brushName must be exactly one of these strings:
-  'pen'  'rotring'  '2B'  'HB'  '2H'  'cpencil'  'pastel'  'crayon'  'charcoal'
-  'spray'  'marker'
-field name must be exactly one of these strings:
-  'hand'  'curved'  'zigzag'  'waves'  'seabed'  'spiral'  'columns'
-Pick ONE. Passing more than one name in a string throws.
+brushName is exactly one of: 'pen' 'rotring' '2B' 'HB' '2H' 'cpencil' 'pastel' 'crayon'
+'charcoal' 'spray' 'marker'.  field name is exactly one of: 'hand' 'curved' 'zigzag'
+'waves' 'seabed' 'spiral' 'columns'.  Copy one name exactly — no spaces inside the quotes,
+never two names in one string, and 'waves' not 'wave'.
 
-A wash, then ink over it (your own colours, not these):
-  brush.fill(WASH_COLOUR, 90);              // opacity 60..120 reads as watercolour
-  brush.fillBleed(0.15, 'out');
-  brush.fillTexture(0.6, 0.4);
-  brush.polygon([[-320,-260],[-170,-260],[-170,-130],[-320,-130]]);
-  brush.noFill();
-  brush.set('rotring', INK_COLOUR, 2);
-  brush.line(-320, -130, -170, -130);
+MISTAKES THAT CRASH THE SKETCH — all of these have happened
+  It is brush.rect not brush.rectangle, brush.circle not brush.ellipse. There is no
+  brush.background, stroke, strokeCap, lineWidth, polyline, quad, curve, text, textSize or
+  noWiggle. Any method not listed above throws and the sketch scores nothing.
+  Call brush.set(...) before the first shape and after every change of brush or colour;
+  nothing is set by default. Colours are strings like '#22221f' — there is no BLACK.
+  Never build point objects like {x:10, y:20}: reading .x of undefined is the commonest
+  crash of all. Use plain numbers — const RHX = -150, RHY = 120.
+
+WHAT A BICYCLE LOOKS LIKE FROM THE SIDE
+  Two circles of equal radius on one horizontal line, about two and a half radii apart —
+  clearly separated, never touching. Between them a closed frame of straight tubes: rear
+  hub up to a saddle, forward to the handlebars, down to the front hub, and a tube along
+  the bottom joining the hubs. The frame meets both wheels at their centres. A fork runs
+  from the handlebars to the front hub, and a small chainring circle sits on the bottom
+  tube near the rear, with a chain line back to the rear hub.
+
+HOW TO BUILD IT
+  Choose the two hub positions and the wheel radius first as plain numbers, and compute
+  every other point from them arithmetically. Wheels, then the frame between them, then
+  saddle, bars and fork, then the drivetrain. Washes before ink. Keep it under 30 brush
+  calls: a clear bicycle beats a detailed one that throws.
 
 p5 built-ins are available: cos, sin, atan2, TWO_PI, PI, random, map, min, max, abs.
 

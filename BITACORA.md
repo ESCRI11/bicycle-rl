@@ -1443,3 +1443,74 @@ structure produces structure and nothing else. **v3 gets an aesthetic component,
 the ladder first.**
 
 **Next.** Final eval batch, the before/after figure, and the adapter mirrored home.
+
+## 024 — 2026-08-30 — Preparing v3: teaching it to care what the drawing looks like
+
+**Goal.** Run 2 produced bicycles and threw the paint away. v3 adds a component that pays for
+how the drawing looks — and, following the rule that has now caught four bugs, proves the
+component works before it earns any weight.
+
+**The motivation, in one table.** Run 2's own output, cycle 0 against cycle 19:
+
+| | cycle 0 | cycle 19 |
+|---|---|---|
+| distinct colours per sketch | 3.6 | **0.9** |
+| uses `brush.fill` | 115/128 | **4/128** |
+| median code | 1538 | 698 |
+
+Every component of that reward was structural, so the model optimised structure and dropped
+everything else. It is the cleanest demonstration in this notebook of a reward getting
+exactly what it asked for and nothing more — and it makes the user's earlier remark on
+HPSv3 look prescient rather than speculative: *"humans prefer bikes that looks like bikes
+rather than blobs"*. The converse now has evidence attached.
+
+**What v3 adds.** `HPSv3` — a 7B Qwen2-VL with a RankNet head that scores an (image, prompt)
+pair for human preference. Two properties matter here beyond "it measures beauty":
+
+- **It is prompt-conditioned**, so it partly measures *"does this look like the bicycle we
+  asked for"* rather than pure aesthetics.
+- **It is continuous**, where our checklist is five binaries and 70% of samples score exactly
+  zero. That sparsity is what made GEPA unsearchable and what keeps the early gradient thin.
+
+Proposed weights: checklist 0.45, HPS 0.25, pairwise 0.20, gate 0.05, length 0.05, with HPS
+normalised inside each GRPO group since its scores are unbounded reals. The failure mode to
+watch is the mirror of run 2's — trading frames away for prettiness — and the checklist
+number reports it immediately.
+
+**Two gates before any GPU hours**, both written and on the box:
+
+- **stage 0, the collapse test.** RL reinforces only what the policy samples. If run 2's
+  adapter has driven painting to ~0 probability, an aesthetic reward has nothing to grab and
+  v3 should start from the base model instead of warm-starting.
+- **stage 1, HPS on the ladder.** Four gates, the decisive one being run 2's cycle-0 sketches
+  (colourful, badly drawn) against its cycle-19 sketches (bare, well drawn). If HPS cannot
+  separate those, it cannot restore the colour and it does not enter the reward.
+
+**Dead ends — a day of dependency archaeology, all now fixed in `box/setup.sh`.**
+
+- **`pip install hpsv3` downgraded the environment**: torch to 2.5.1 and **vLLM to 0.7.0**,
+  which predates Qwen2.5-VL support. The judge would not have loaded, and the failure would
+  have read as a mysterious server crash. hpsv3 now lives in its own venv and `hps.py` talks
+  to it over a pipe — a long-lived worker, so the model loads once.
+- **hpsv3 does not declare `matplotlib` or `tensorboard`.** Both needed, neither in its
+  requirements.
+- **`python3 -m venv` builds an environment with no pip** unless `python3.10-venv` is
+  installed. It exits 0, creates the directory, provides a working `python`, and silently
+  omits pip; every install into it then fails with `No such file or directory`.
+
+**And a fifth "surprising result" that was a bug.** The collapse test first reported *94%
+still paint — warm-start*, which contradicts run 2's own cycle-19 count of 4/128. The
+contradiction is what saved it: **the test was reading the v1 prompt.** The repo's canonical
+`prompt/system.txt` had never been updated to v2.1 — that was done by hand on the old box, so
+a fresh box synced v1. A v2.1-trained adapter measured against a v1 prompt means nothing.
+
+Fixed at the root: **v2.1 is now the canonical prompt in the repo** (v1 archived beside it),
+so no box needs a manual copy. That manual step was the bug.
+
+Tally so far of surprising results that turned out to be our plumbing: a judge answering a
+constant (five questions in one call), gold scoring 0/5 (six threads racing on one temp
+file), every item false (`json.loads` rejecting `True`), a run scoring 0.0 (reflection posting
+to the local judge), and now a collapse that was a prompt mismatch. **Five for five.** The
+habit that catches them is checking a surprising number against something already known.
+
+**Next.** Re-run gate 0 against the correct prompt, then gate 1, then train.

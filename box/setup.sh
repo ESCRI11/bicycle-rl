@@ -8,7 +8,9 @@
 set -euo pipefail
 
 sudo apt-get update -qq
-sudo DEBIAN_FRONTEND=noninteractive apt-get install -y -qq nodejs wget nvtop
+sudo DEBIAN_FRONTEND=noninteractive apt-get install -y -qq nodejs wget nvtop python3.10-venv
+# python3.10-venv: without it `python3 -m venv` builds an environment with no pip,
+# silently, and every install into it fails with "No such file or directory"
 
 # node is only needed for `node --check` (the compile gate), any version does.
 # chrome is the render backend on a normal machine; on this class of VM its CLI
@@ -19,10 +21,14 @@ wget -q https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.de
 sudo DEBIAN_FRONTEND=noninteractive apt-get install -y -qq /tmp/chrome.deb
 
 pip3 install -q --upgrade pip
-pip3 install -q vllm playwright peft accelerate gepa hpsv3
-# accelerate: transformers needs it for device_map. hpsv3: the aesthetic reward component,
-# a 7B Qwen2-VL that scores (image, prompt) human preference — ~16GB, sits beside the judge
-# during scoring but not during training.
+pip3 install -q vllm playwright peft accelerate gepa
+# accelerate: transformers needs it for device_map.
+#
+# hpsv3 goes in its OWN venv: it pins torch 2.5 and drags vLLM back to 0.7, which predates
+# Qwen2.5-VL support and silently breaks the judge. bike/hps.py talks to it over a pipe.
+python3 -m venv "$HOME/hpsenv"
+"$HOME/hpsenv/bin/pip" install -q --upgrade pip
+"$HOME/hpsenv/bin/pip" install -q hpsv3 matplotlib tensorboard  # both undeclared hpsv3 deps
 python3 -m playwright install chromium
 
 echo

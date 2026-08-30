@@ -13,26 +13,37 @@ already swaps models between phases.
 
 Scores are unbounded reals, not 0..1: calibrate against the ladder before weighting them.
 """
-import argparse, pathlib, sys
+import argparse, json, os, pathlib, subprocess, sys
 
-_INFERENCER = None
+HERE = pathlib.Path(__file__).parent
+# hpsv3 pins torch 2.5 and pulls vLLM back to 0.7, which cannot serve Qwen2.5-VL — so it
+# lives in its own venv and we talk to it over a pipe. HPS_PYTHON points at that interpreter.
+HPS_PYTHON = os.environ.get("HPS_PYTHON", str(pathlib.Path.home() / "hpsenv/bin/python"))
+_PROC = None
 
 
-def scorer():
-    global _INFERENCER
-    if _INFERENCER is None:
-        from hpsv3 import HPSv3RewardInferencer
-        _INFERENCER = HPSv3RewardInferencer(device="cuda")
-    return _INFERENCER
+def _worker():
+    global _PROC
+    if _PROC is None or _PROC.poll() is not None:
+        _PROC = subprocess.Popen([HPS_PYTHON, str(HERE / "hps_worker.py")],
+                                 stdin=subprocess.PIPE, stdout=subprocess.PIPE, text=True)
+    return _PROC
 
 
 def score(paths, prompt=None):
     """mu for each image. The prompt matters — HPS scores (image, prompt) alignment as well
     as quality, which is why it can reward 'looks like the bicycle we asked for'."""
     paths = [str(p) for p in paths]
-    prompt = prompt or (pathlib.Path(__file__).parent / "prompt/user.txt").read_text().strip()
-    out = scorer().reward(paths, [prompt] * len(paths))
-    return [float(r[0].item()) for r in out]
+    prompt = prompt or (HERE / "prompt/user.txt").read_text().strip()
+    if not paths:
+        return []
+    w = _worker()
+    w.stdin.write(json.dumps({"paths": paths, "prompt": prompt}) + "\n")
+    w.stdin.flush()
+    line = w.stdout.readline()
+    if not line:
+        raise RuntimeError(f"hps worker died — check {HPS_PYTHON} and hpsv3 install")
+    return json.loads(line)["scores"]
 
 
 def main():
