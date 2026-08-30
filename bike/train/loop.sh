@@ -25,6 +25,9 @@ for c in $(seq "$start" $((start + CYCLES - 1))); do
     for _ in $(seq 60); do curl -s --max-time 3 localhost:8000/v1/models | grep -q 72B && break; sleep 10; done
     python3 train/score.py --dir "$D" --group "$GROUP"
     pkill -f "[v]llm serve"; sleep 8
+    # HPS runs alone: it peaks at 64GB, the judge holds 46GB, and the card is 80GB. It is
+    # fast (0.16s an image, ~20s a cycle) so sequencing costs almost nothing.
+    HPS_BATCH=${HPS_BATCH:-2} python3 train/score.py --dir "$D" --group "$GROUP" --hps-only
   fi
 
   python3 train/update.py --dir "$D" --run "$RUN" --group "$GROUP" || exit 1
