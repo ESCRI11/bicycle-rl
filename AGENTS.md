@@ -82,6 +82,13 @@ Folders appear when we get to them. Do not scaffold empty ones.
   harvest gives the same file.
 - Generated artefacts that are cheap to rebuild stay out of git; the curated corpus goes in.
 
+## Open TODOs
+
+- **Publish the LoRA adapters to the Hugging Face Hub when the project wraps.** 154 MB each,
+  too large for plain git, and currently on one disk only. Ship each with its base model id,
+  the exact prompt it was trained against, and the reward weights — without those three an
+  adapter is not reproducible. Details in `results/README.md`.
+
 ## Working agreements
 
 - Ask before adding a training dependency, a GPU spend, or a new stage to the pipeline.

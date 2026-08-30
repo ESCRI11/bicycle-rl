@@ -27,8 +27,18 @@ sample sheets from the start, middle and end.
   sheets carry the visual story; individual rollouts live in the local `runs/` mirror.
 - **The LoRA adapters** — 154 MB each, over GitHub's 100 MB per-file limit, so they cannot go
   in plain git. They are in `runs/<box>/lora/` locally, with the optimiser state beside them.
-  **If those matter beyond this machine, they need git-lfs or object storage** — worth doing
-  before the mirror is the only copy.
+
+  **TODO, when the project wraps: publish the adapters to the Hugging Face Hub.** That is
+  where model weights belong, it costs nothing, and it means a reader of the post can load
+  run 2's adapter and draw their own bicycles rather than take the numbers on trust. Until
+  then they exist on exactly one disk, which is the real risk here — not the repo size.
+
+      huggingface-cli login
+      huggingface-cli upload <user>/bicycle-rl-run2 runs/ubuntu_216_81_245_141/lora
+
+  Publish with the base model id (`Qwen/Qwen2.5-Coder-7B-Instruct`), the prompt it was
+  trained against (`bike/prompt/system.txt`, v2.1) and the reward weights — an adapter
+  without those three is not reproducible.
 
 ## Rebuilding a run's artefacts
 
