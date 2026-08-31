@@ -1604,3 +1604,55 @@ cd ~/bicycle-rl/bike && setsid nohup ./train/loop.sh 20 128 > ~/train.log 2>&1 &
 Cycle 0 opened at gate 0.625, checklist 0.106, reward mean 0.28 — against run 2's cycle 0 at
 gate 0.383. Same prompt, same base model; the difference is that HPS pays for the paint that
 run 2 spent.
+
+---
+
+## 026 — 2026-08-30 — Run 3: it keeps the paint
+
+Fourteen of twenty cycles, 224 steps, then the box was reclaimed. What we came for:
+
+| cycle | rendered | reward | checklist | paint | judged-bike | two-wheels | closed-frame |
+|---|---|---|---|---|---|---|---|
+| 000 | 58 | 0.212 | 0.084 | 108 | 9 | 26 | 11 |
+| 006 | 77 | 0.276 | 0.131 | 103 | 13 | 36 | 13 |
+| 009 | 98 | 0.350 | 0.209 | 115 | 27 | 57 | 15 |
+| 011 | 115 | 0.399 | 0.287 | 109 | 43 | 73 | 23 |
+| 013 | 125 | 0.486 | 0.374 | 105 | 77 | 107 | 27 |
+
+**The paint column is the result.** 108 sketches called `brush.fill` at cycle 0 and 105 at
+cycle 13. Run 2's fell to 4/128 and the collapse test could not revive it at temperature 1.2.
+A quarter of the reward pointed at HPSv3 was enough; it did not need to be more.
+
+And it cost nothing in structure. 60% of cycle 13 was judged a bicycle at step 224, against
+run 2's 72% at step 320 — the same trajectory, with the colour still on the paper.
+
+**The new failure mode is beautiful wheels.** `two_wheels` went 26 → 107 while `closed_frame`
+went 11 → 27: the ratio widened from 1:2.4 to 1:4. One sample makes it concrete — cycle 11's
+`gen_020`, two red spoked wheels with a rectangle, a circle and a triangle floating in the
+gap. No frame by any item the judge checked, and it scored **0.623**:
+
+```
+checklist 0.20 (two_wheels, wheels_apart)   pairwise 1.00   hps 0.931 (raw +1.16)
+```
+
+`hps_raw +1.16` was the highest in the run; typical drawings sit near −5. The aesthetic half
+paid 0.43 of that 0.62 and the checklist paid 0.09. This is run 1's two-circles trap wearing
+a better coat: v2 taught the model not to be paid for bare circles, and v3 has shown it that
+*pretty* bare circles pay well. **For v4: gate HPS behind `frame_spans`, the way tier 2 is
+already gated behind `two_wheels`.** Aesthetics should scale a bicycle, not replace one.
+
+**Dead end — a mirror that lies.** The box went at about 19:00. `pull.sh` kept running until
+21:38 printing nothing at all, because it only echoed on success and sent rsync's stderr to
+`/dev/null`. `pgrep` said it was alive, so it looked healthy for nearly three hours.
+
+Nothing was lost — the last pull at 18:57 has the step-224 adapter, checkpoints at 80 and
+160, all fourteen sheets and every cycle's rewards — but that was luck, not design. Fixed:
+failures print, count, say how long since the last good pull, and after three in a row say
+the box is probably gone.
+
+The tell was the host key. All three (ed25519, rsa, ecdsa) had changed: the IP had already
+been handed to another tenant. Worth remembering before reconnecting to a rented address —
+and before typing a password into one.
+
+**Sixth for six.** The tally from entry 024 stands: another surprising signal (the mirror
+"working" for three hours) that was our own plumbing.

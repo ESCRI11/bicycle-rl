@@ -1,0 +1,2077 @@
+[
+ {
+  "file": "gen_000.js",
+  "reward": 0.05,
+  "parts": {
+   "gate": 0.0,
+   "length": 1.0,
+   "checklist": 0.0,
+   "pairwise": 0.0,
+   "hps": 0.0
+  },
+  "items": {}
+ },
+ {
+  "file": "gen_001.js",
+  "reward": 0.395,
+  "parts": {
+   "gate": 1.0,
+   "length": 1.0,
+   "checklist": 0.1,
+   "pairwise": 0.0,
+   "hps": 1.0
+  },
+  "items": {
+   "is_bicycle": false,
+   "two_wheels": false,
+   "wheels_apart": true,
+   "frame_spans": false,
+   "closed_frame": false
+  },
+  "hps_raw": -1.071
+ },
+ {
+  "file": "gen_002.js",
+  "reward": 0.4528,
+  "parts": {
+   "gate": 1.0,
+   "length": 1.0,
+   "checklist": 0.0,
+   "pairwise": 1.0,
+   "hps": 0.611
+  },
+  "items": {
+   "is_bicycle": false,
+   "two_wheels": false,
+   "wheels_apart": false,
+   "frame_spans": true,
+   "closed_frame": true
+  },
+  "hps_raw": -4.535
+ },
+ {
+  "file": "gen_003.js",
+  "reward": 0.352,
+  "parts": {
+   "gate": 1.0,
+   "length": 1.0,
+   "checklist": 0.1,
+   "pairwise": 0.0,
+   "hps": 0.828
+  },
+  "items": {
+   "is_bicycle": false,
+   "two_wheels": true,
+   "wheels_apart": false,
+   "frame_spans": false,
+   "closed_frame": false
+  },
+  "hps_raw": -2.601
+ },
+ {
+  "file": "gen_004.js",
+  "reward": 0.1835,
+  "parts": {
+   "gate": 1.0,
+   "length": 1.0,
+   "checklist": 0.1,
+   "pairwise": 0.0,
+   "hps": 0.154
+  },
+  "items": {
+   "is_bicycle": false,
+   "two_wheels": true,
+   "wheels_apart": false,
+   "frame_spans": false,
+   "closed_frame": false
+  },
+  "hps_raw": -8.597
+ },
+ {
+  "file": "gen_005.js",
+  "reward": 0.05,
+  "parts": {
+   "gate": 0.0,
+   "length": 1.0,
+   "checklist": 0.0,
+   "pairwise": 0.0,
+   "hps": 0.0
+  },
+  "items": {}
+ },
+ {
+  "file": "gen_006.js",
+  "reward": 0.5722,
+  "parts": {
+   "gate": 1.0,
+   "length": 1.0,
+   "checklist": 0.45,
+   "pairwise": 1.0,
+   "hps": 0.279
+  },
+  "items": {
+   "is_bicycle": false,
+   "two_wheels": true,
+   "wheels_apart": false,
+   "frame_spans": false,
+   "closed_frame": true
+  },
+  "hps_raw": -7.49
+ },
+ {
+  "file": "gen_007.js",
+  "reward": 0.2,
+  "parts": {
+   "gate": 1.0,
+   "length": 1.0,
+   "checklist": 0.0,
+   "pairwise": 0.5,
+   "hps": 0.0
+  },
+  "items": {
+   "is_bicycle": false,
+   "two_wheels": false,
+   "wheels_apart": false,
+   "frame_spans": false,
+   "closed_frame": true
+  },
+  "hps_raw": -9.97
+ },
+ {
+  "file": "gen_008.js",
+  "reward": 0.05,
+  "parts": {
+   "gate": 0.0,
+   "length": 1.0,
+   "checklist": 0.0,
+   "pairwise": 0.0,
+   "hps": 0.0
+  },
+  "items": {}
+ },
+ {
+  "file": "gen_009.js",
+  "reward": 0.4795,
+  "parts": {
+   "gate": 1.0,
+   "length": 1.0,
+   "checklist": 0.55,
+   "pairwise": 0.0,
+   "hps": 0.528
+  },
+  "items": {
+   "is_bicycle": false,
+   "two_wheels": true,
+   "wheels_apart": true,
+   "frame_spans": true,
+   "closed_frame": false
+  },
+  "hps_raw": -3.918
+ },
+ {
+  "file": "gen_010.js",
+  "reward": 0.05,
+  "parts": {
+   "gate": 0.0,
+   "length": 1.0,
+   "checklist": 0.0,
+   "pairwise": 0.0,
+   "hps": 0.0
+  },
+  "items": {}
+ },
+ {
+  "file": "gen_011.js",
+  "reward": 0.19,
+  "parts": {
+   "gate": 1.0,
+   "length": 1.0,
+   "checklist": 0.2,
+   "pairwise": 0.0,
+   "hps": 0.0
+  },
+  "items": {
+   "is_bicycle": false,
+   "two_wheels": true,
+   "wheels_apart": true,
+   "frame_spans": false,
+   "closed_frame": false
+  },
+  "hps_raw": -8.209
+ },
+ {
+  "file": "gen_012.js",
+  "reward": 0.05,
+  "parts": {
+   "gate": 0.0,
+   "length": 1.0,
+   "checklist": 0.0,
+   "pairwise": 0.0,
+   "hps": 0.0
+  },
+  "items": {}
+ },
+ {
+  "file": "gen_013.js",
+  "reward": 0.199,
+  "parts": {
+   "gate": 1.0,
+   "length": 1.0,
+   "checklist": 0.0,
+   "pairwise": 0.0,
+   "hps": 0.396
+  },
+  "items": {
+   "is_bicycle": false,
+   "two_wheels": false,
+   "wheels_apart": false,
+   "frame_spans": false,
+   "closed_frame": false
+  },
+  "hps_raw": -4.99
+ },
+ {
+  "file": "gen_014.js",
+  "reward": 0.4188,
+  "parts": {
+   "gate": 1.0,
+   "length": 1.0,
+   "checklist": 0.2,
+   "pairwise": 1.0,
+   "hps": 0.115
+  },
+  "items": {
+   "is_bicycle": true,
+   "two_wheels": false,
+   "wheels_apart": true,
+   "frame_spans": true,
+   "closed_frame": true
+  },
+  "hps_raw": -7.275
+ },
+ {
+  "file": "gen_015.js",
+  "reward": 0.685,
+  "parts": {
+   "gate": 1.0,
+   "length": 1.0,
+   "checklist": 0.3,
+   "pairwise": 1.0,
+   "hps": 1.0
+  },
+  "items": {
+   "is_bicycle": true,
+   "two_wheels": true,
+   "wheels_apart": true,
+   "frame_spans": false,
+   "closed_frame": false
+  },
+  "hps_raw": -0.089
+ },
+ {
+  "file": "gen_016.js",
+  "reward": 0.55,
+  "parts": {
+   "gate": 1.0,
+   "length": 1.0,
+   "checklist": 0.0,
+   "pairwise": 1.0,
+   "hps": 1.0
+  },
+  "items": {
+   "is_bicycle": false,
+   "two_wheels": false,
+   "wheels_apart": false,
+   "frame_spans": false,
+   "closed_frame": true
+  },
+  "hps_raw": 3.496
+ },
+ {
+  "file": "gen_017.js",
+  "reward": 0.05,
+  "parts": {
+   "gate": 0.0,
+   "length": 1.0,
+   "checklist": 0.0,
+   "pairwise": 0.0,
+   "hps": 0.0
+  },
+  "items": {}
+ },
+ {
+  "file": "gen_018.js",
+  "reward": 0.38,
+  "parts": {
+   "gate": 1.0,
+   "length": 1.0,
+   "checklist": 0.0,
+   "pairwise": 1.0,
+   "hps": 0.32
+  },
+  "items": {
+   "is_bicycle": false,
+   "two_wheels": false,
+   "wheels_apart": false,
+   "frame_spans": false,
+   "closed_frame": false
+  },
+  "hps_raw": -4.672
+ },
+ {
+  "file": "gen_019.js",
+  "reward": 0.3998,
+  "parts": {
+   "gate": 1.0,
+   "length": 1.0,
+   "checklist": 0.65,
+   "pairwise": 0.0,
+   "hps": 0.029
+  },
+  "items": {
+   "is_bicycle": true,
+   "two_wheels": true,
+   "wheels_apart": true,
+   "frame_spans": true,
+   "closed_frame": false
+  },
+  "hps_raw": -8.159
+ },
+ {
+  "file": "gen_020.js",
+  "reward": 0.05,
+  "parts": {
+   "gate": 0.0,
+   "length": 1.0,
+   "checklist": 0.0,
+   "pairwise": 0.0,
+   "hps": 0.0
+  },
+  "items": {}
+ },
+ {
+  "file": "gen_021.js",
+  "reward": 0.1,
+  "parts": {
+   "gate": 1.0,
+   "length": 1.0,
+   "checklist": 0.0,
+   "pairwise": 0.0,
+   "hps": 0.0
+  },
+  "items": {
+   "is_bicycle": false,
+   "two_wheels": false,
+   "wheels_apart": false,
+   "frame_spans": false,
+   "closed_frame": false
+  },
+  "hps_raw": -8.508
+ },
+ {
+  "file": "gen_022.js",
+  "reward": 0.05,
+  "parts": {
+   "gate": 0.0,
+   "length": 1.0,
+   "checklist": 0.0,
+   "pairwise": 0.0,
+   "hps": 0.0
+  },
+  "items": {}
+ },
+ {
+  "file": "gen_023.js",
+  "reward": 0.05,
+  "parts": {
+   "gate": 0.0,
+   "length": 1.0,
+   "checklist": 0.0,
+   "pairwise": 0.0,
+   "hps": 0.0
+  },
+  "items": {}
+ },
+ {
+  "file": "gen_024.js",
+  "reward": 0.05,
+  "parts": {
+   "gate": 0.0,
+   "length": 1.0,
+   "checklist": 0.0,
+   "pairwise": 0.0,
+   "hps": 0.0
+  },
+  "items": {}
+ },
+ {
+  "file": "gen_025.js",
+  "reward": 0.05,
+  "parts": {
+   "gate": 0.0,
+   "length": 1.0,
+   "checklist": 0.0,
+   "pairwise": 0.0,
+   "hps": 0.0
+  },
+  "items": {}
+ },
+ {
+  "file": "gen_026.js",
+  "reward": 0.5325,
+  "parts": {
+   "gate": 1.0,
+   "length": 1.0,
+   "checklist": 0.1,
+   "pairwise": 1.0,
+   "hps": 0.75
+  },
+  "items": {
+   "is_bicycle": false,
+   "two_wheels": false,
+   "wheels_apart": true,
+   "frame_spans": false,
+   "closed_frame": false
+  },
+  "hps_raw": -7.357
+ },
+ {
+  "file": "gen_027.js",
+  "reward": 0.2268,
+  "parts": {
+   "gate": 1.0,
+   "length": 1.0,
+   "checklist": 0.1,
+   "pairwise": 0.0,
+   "hps": 0.327
+  },
+  "items": {
+   "is_bicycle": false,
+   "two_wheels": false,
+   "wheels_apart": true,
+   "frame_spans": false,
+   "closed_frame": false
+  },
+  "hps_raw": -8.387
+ },
+ {
+  "file": "gen_028.js",
+  "reward": 0.44,
+  "parts": {
+   "gate": 1.0,
+   "length": 1.0,
+   "checklist": 0.2,
+   "pairwise": 0.0,
+   "hps": 1.0
+  },
+  "items": {
+   "is_bicycle": false,
+   "two_wheels": true,
+   "wheels_apart": true,
+   "frame_spans": false,
+   "closed_frame": false
+  },
+  "hps_raw": -6.749
+ },
+ {
+  "file": "gen_029.js",
+  "reward": 0.05,
+  "parts": {
+   "gate": 0.0,
+   "length": 1.0,
+   "checklist": 0.0,
+   "pairwise": 0.0,
+   "hps": 0.0
+  },
+  "items": {}
+ },
+ {
+  "file": "gen_030.js",
+  "reward": 0.05,
+  "parts": {
+   "gate": 0.0,
+   "length": 1.0,
+   "checklist": 0.0,
+   "pairwise": 0.0,
+   "hps": 0.0
+  },
+  "items": {}
+ },
+ {
+  "file": "gen_031.js",
+  "reward": 0.39,
+  "parts": {
+   "gate": 1.0,
+   "length": 1.0,
+   "checklist": 0.2,
+   "pairwise": 1.0,
+   "hps": 0.0
+  },
+  "items": {
+   "is_bicycle": true,
+   "two_wheels": false,
+   "wheels_apart": true,
+   "frame_spans": false,
+   "closed_frame": false
+  },
+  "hps_raw": -9.184
+ },
+ {
+  "file": "gen_032.js",
+  "reward": 0.05,
+  "parts": {
+   "gate": 0.0,
+   "length": 1.0,
+   "checklist": 0.0,
+   "pairwise": 0.0,
+   "hps": 0.0
+  },
+  "items": {}
+ },
+ {
+  "file": "gen_033.js",
+  "reward": 0.05,
+  "parts": {
+   "gate": 0.0,
+   "length": 1.0,
+   "checklist": 0.0,
+   "pairwise": 0.0,
+   "hps": 0.0
+  },
+  "items": {}
+ },
+ {
+  "file": "gen_034.js",
+  "reward": 0.1208,
+  "parts": {
+   "gate": 1.0,
+   "length": 1.0,
+   "checklist": 0.0,
+   "pairwise": 0.0,
+   "hps": 0.083
+  },
+  "items": {
+   "is_bicycle": false,
+   "two_wheels": false,
+   "wheels_apart": false,
+   "frame_spans": false,
+   "closed_frame": false
+  },
+  "hps_raw": -5.51
+ },
+ {
+  "file": "gen_035.js",
+  "reward": 0.4603,
+  "parts": {
+   "gate": 1.0,
+   "length": 1.0,
+   "checklist": 0.1,
+   "pairwise": 0.5,
+   "hps": 0.861
+  },
+  "items": {
+   "is_bicycle": false,
+   "two_wheels": true,
+   "wheels_apart": false,
+   "frame_spans": false,
+   "closed_frame": false
+  },
+  "hps_raw": 0.984
+ },
+ {
+  "file": "gen_036.js",
+  "reward": 0.7655,
+  "parts": {
+   "gate": 1.0,
+   "length": 1.0,
+   "checklist": 0.9,
+   "pairwise": 1.0,
+   "hps": 0.242
+  },
+  "items": {
+   "is_bicycle": true,
+   "two_wheels": true,
+   "wheels_apart": false,
+   "frame_spans": true,
+   "closed_frame": true
+  },
+  "hps_raw": -4.182
+ },
+ {
+  "file": "gen_037.js",
+  "reward": 0.05,
+  "parts": {
+   "gate": 0.0,
+   "length": 1.0,
+   "checklist": 0.0,
+   "pairwise": 0.0,
+   "hps": 0.0
+  },
+  "items": {}
+ },
+ {
+  "file": "gen_038.js",
+  "reward": 0.3,
+  "parts": {
+   "gate": 1.0,
+   "length": 1.0,
+   "checklist": 0.0,
+   "pairwise": 1.0,
+   "hps": 0.0
+  },
+  "items": {
+   "is_bicycle": false,
+   "two_wheels": false,
+   "wheels_apart": false,
+   "frame_spans": false,
+   "closed_frame": false
+  },
+  "hps_raw": -6.205
+ },
+ {
+  "file": "gen_039.js",
+  "reward": 0.5525,
+  "parts": {
+   "gate": 1.0,
+   "length": 1.0,
+   "checklist": 0.45,
+   "pairwise": 0.0,
+   "hps": 1.0
+  },
+  "items": {
+   "is_bicycle": false,
+   "two_wheels": true,
+   "wheels_apart": false,
+   "frame_spans": true,
+   "closed_frame": false
+  },
+  "hps_raw": 2.147
+ },
+ {
+  "file": "gen_040.js",
+  "reward": 0.05,
+  "parts": {
+   "gate": 0.0,
+   "length": 1.0,
+   "checklist": 0.0,
+   "pairwise": 0.0,
+   "hps": 0.0
+  },
+  "items": {}
+ },
+ {
+  "file": "gen_041.js",
+  "reward": 0.05,
+  "parts": {
+   "gate": 0.0,
+   "length": 1.0,
+   "checklist": 0.0,
+   "pairwise": 0.0,
+   "hps": 0.0
+  },
+  "items": {}
+ },
+ {
+  "file": "gen_042.js",
+  "reward": 0.05,
+  "parts": {
+   "gate": 0.0,
+   "length": 1.0,
+   "checklist": 0.0,
+   "pairwise": 0.0,
+   "hps": 0.0
+  },
+  "items": {}
+ },
+ {
+  "file": "gen_043.js",
+  "reward": 0.495,
+  "parts": {
+   "gate": 1.0,
+   "length": 1.0,
+   "checklist": 0.1,
+   "pairwise": 0.5,
+   "hps": 1.0
+  },
+  "items": {
+   "is_bicycle": false,
+   "two_wheels": true,
+   "wheels_apart": false,
+   "frame_spans": false,
+   "closed_frame": false
+  },
+  "hps_raw": 0.209
+ },
+ {
+  "file": "gen_044.js",
+  "reward": 0.2685,
+  "parts": {
+   "gate": 1.0,
+   "length": 1.0,
+   "checklist": 0.0,
+   "pairwise": 0.5,
+   "hps": 0.274
+  },
+  "items": {
+   "is_bicycle": false,
+   "two_wheels": false,
+   "wheels_apart": false,
+   "frame_spans": false,
+   "closed_frame": false
+  },
+  "hps_raw": -6.737
+ },
+ {
+  "file": "gen_045.js",
+  "reward": 0.05,
+  "parts": {
+   "gate": 0.0,
+   "length": 1.0,
+   "checklist": 0.0,
+   "pairwise": 0.0,
+   "hps": 0.0
+  },
+  "items": {}
+ },
+ {
+  "file": "gen_046.js",
+  "reward": 0.253,
+  "parts": {
+   "gate": 1.0,
+   "length": 1.0,
+   "checklist": 0.0,
+   "pairwise": 0.5,
+   "hps": 0.212
+  },
+  "items": {
+   "is_bicycle": false,
+   "two_wheels": false,
+   "wheels_apart": false,
+   "frame_spans": false,
+   "closed_frame": true
+  },
+  "hps_raw": -7.328
+ },
+ {
+  "file": "gen_047.js",
+  "reward": 0.335,
+  "parts": {
+   "gate": 1.0,
+   "length": 1.0,
+   "checklist": 0.3,
+   "pairwise": 0.5,
+   "hps": 0.0
+  },
+  "items": {
+   "is_bicycle": true,
+   "two_wheels": true,
+   "wheels_apart": true,
+   "frame_spans": false,
+   "closed_frame": false
+  },
+  "hps_raw": -9.359
+ },
+ {
+  "file": "gen_048.js",
+  "reward": 0.595,
+  "parts": {
+   "gate": 1.0,
+   "length": 1.0,
+   "checklist": 0.1,
+   "pairwise": 1.0,
+   "hps": 1.0
+  },
+  "items": {
+   "is_bicycle": false,
+   "two_wheels": false,
+   "wheels_apart": true,
+   "frame_spans": true,
+   "closed_frame": false
+  },
+  "hps_raw": -2.543
+ },
+ {
+  "file": "gen_049.js",
+  "reward": 0.05,
+  "parts": {
+   "gate": 0.0,
+   "length": 1.0,
+   "checklist": 0.0,
+   "pairwise": 0.0,
+   "hps": 0.0
+  },
+  "items": {}
+ },
+ {
+  "file": "gen_050.js",
+  "reward": 0.05,
+  "parts": {
+   "gate": 0.0,
+   "length": 1.0,
+   "checklist": 0.0,
+   "pairwise": 0.0,
+   "hps": 0.0
+  },
+  "items": {}
+ },
+ {
+  "file": "gen_051.js",
+  "reward": 0.05,
+  "parts": {
+   "gate": 0.0,
+   "length": 1.0,
+   "checklist": 0.0,
+   "pairwise": 0.0,
+   "hps": 0.0
+  },
+  "items": {}
+ },
+ {
+  "file": "gen_052.js",
+  "reward": 0.05,
+  "parts": {
+   "gate": 0.0,
+   "length": 1.0,
+   "checklist": 0.0,
+   "pairwise": 0.0,
+   "hps": 0.0
+  },
+  "items": {}
+ },
+ {
+  "file": "gen_053.js",
+  "reward": 0.3455,
+  "parts": {
+   "gate": 1.0,
+   "length": 1.0,
+   "checklist": 0.3,
+   "pairwise": 0.5,
+   "hps": 0.042
+  },
+  "items": {
+   "is_bicycle": true,
+   "two_wheels": true,
+   "wheels_apart": true,
+   "frame_spans": false,
+   "closed_frame": false
+  },
+  "hps_raw": -9.663
+ },
+ {
+  "file": "gen_054.js",
+  "reward": 0.5078,
+  "parts": {
+   "gate": 1.0,
+   "length": 1.0,
+   "checklist": 0.2,
+   "pairwise": 0.5,
+   "hps": 0.871
+  },
+  "items": {
+   "is_bicycle": false,
+   "two_wheels": true,
+   "wheels_apart": true,
+   "frame_spans": false,
+   "closed_frame": false
+  },
+  "hps_raw": -3.499
+ },
+ {
+  "file": "gen_055.js",
+  "reward": 0.245,
+  "parts": {
+   "gate": 1.0,
+   "length": 1.0,
+   "checklist": 0.1,
+   "pairwise": 0.5,
+   "hps": 0.0
+  },
+  "items": {
+   "is_bicycle": false,
+   "two_wheels": true,
+   "wheels_apart": false,
+   "frame_spans": false,
+   "closed_frame": false
+  },
+  "hps_raw": -9.975
+ },
+ {
+  "file": "gen_056.js",
+  "reward": 0.367,
+  "parts": {
+   "gate": 1.0,
+   "length": 1.0,
+   "checklist": 0.1,
+   "pairwise": 0.5,
+   "hps": 0.488
+  },
+  "items": {
+   "is_bicycle": false,
+   "two_wheels": false,
+   "wheels_apart": true,
+   "frame_spans": false,
+   "closed_frame": true
+  },
+  "hps_raw": -3.354
+ },
+ {
+  "file": "gen_057.js",
+  "reward": 0.7975,
+  "parts": {
+   "gate": 1.0,
+   "length": 1.0,
+   "checklist": 0.55,
+   "pairwise": 1.0,
+   "hps": 1.0
+  },
+  "items": {
+   "is_bicycle": true,
+   "two_wheels": true,
+   "wheels_apart": false,
+   "frame_spans": true,
+   "closed_frame": false
+  },
+  "hps_raw": 1.039
+ },
+ {
+  "file": "gen_058.js",
+  "reward": 0.5723,
+  "parts": {
+   "gate": 1.0,
+   "length": 1.0,
+   "checklist": 0.2,
+   "pairwise": 1.0,
+   "hps": 0.729
+  },
+  "items": {
+   "is_bicycle": false,
+   "two_wheels": true,
+   "wheels_apart": true,
+   "frame_spans": false,
+   "closed_frame": false
+  },
+  "hps_raw": -1.289
+ },
+ {
+  "file": "gen_059.js",
+  "reward": 0.1,
+  "parts": {
+   "gate": 1.0,
+   "length": 1.0,
+   "checklist": 0.0,
+   "pairwise": 0.0,
+   "hps": 0.0
+  },
+  "items": {
+   "is_bicycle": false,
+   "two_wheels": false,
+   "wheels_apart": false,
+   "frame_spans": false,
+   "closed_frame": false
+  },
+  "hps_raw": -7.54
+ },
+ {
+  "file": "gen_060.js",
+  "reward": 0.05,
+  "parts": {
+   "gate": 0.0,
+   "length": 1.0,
+   "checklist": 0.0,
+   "pairwise": 0.0,
+   "hps": 0.0
+  },
+  "items": {}
+ },
+ {
+  "file": "gen_061.js",
+  "reward": 0.324,
+  "parts": {
+   "gate": 1.0,
+   "length": 1.0,
+   "checklist": 0.1,
+   "pairwise": 0.0,
+   "hps": 0.716
+  },
+  "items": {
+   "is_bicycle": false,
+   "two_wheels": false,
+   "wheels_apart": true,
+   "frame_spans": false,
+   "closed_frame": false
+  },
+  "hps_raw": -1.398
+ },
+ {
+  "file": "gen_062.js",
+  "reward": 0.2868,
+  "parts": {
+   "gate": 1.0,
+   "length": 1.0,
+   "checklist": 0.1,
+   "pairwise": 0.5,
+   "hps": 0.167
+  },
+  "items": {
+   "is_bicycle": true,
+   "two_wheels": false,
+   "wheels_apart": false,
+   "frame_spans": false,
+   "closed_frame": false
+  },
+  "hps_raw": -6.111
+ },
+ {
+  "file": "gen_063.js",
+  "reward": 0.05,
+  "parts": {
+   "gate": 0.0,
+   "length": 1.0,
+   "checklist": 0.0,
+   "pairwise": 0.0,
+   "hps": 0.0
+  },
+  "items": {}
+ },
+ {
+  "file": "gen_064.js",
+  "reward": 0.05,
+  "parts": {
+   "gate": 0.0,
+   "length": 1.0,
+   "checklist": 0.0,
+   "pairwise": 0.0,
+   "hps": 0.0
+  },
+  "items": {}
+ },
+ {
+  "file": "gen_065.js",
+  "reward": 0.3475,
+  "parts": {
+   "gate": 1.0,
+   "length": 1.0,
+   "checklist": 0.55,
+   "pairwise": 0.0,
+   "hps": 0.0
+  },
+  "items": {
+   "is_bicycle": false,
+   "two_wheels": true,
+   "wheels_apart": true,
+   "frame_spans": true,
+   "closed_frame": false
+  },
+  "hps_raw": -9.72
+ },
+ {
+  "file": "gen_066.js",
+  "reward": 0.5445,
+  "parts": {
+   "gate": 1.0,
+   "length": 1.0,
+   "checklist": 0.1,
+   "pairwise": 1.0,
+   "hps": 0.798
+  },
+  "items": {
+   "is_bicycle": false,
+   "two_wheels": true,
+   "wheels_apart": false,
+   "frame_spans": false,
+   "closed_frame": false
+  },
+  "hps_raw": -4.907
+ },
+ {
+  "file": "gen_067.js",
+  "reward": 0.45,
+  "parts": {
+   "gate": 1.0,
+   "length": 1.0,
+   "checklist": 0.0,
+   "pairwise": 0.5,
+   "hps": 1.0
+  },
+  "items": {
+   "is_bicycle": false,
+   "two_wheels": false,
+   "wheels_apart": false,
+   "frame_spans": false,
+   "closed_frame": true
+  },
+  "hps_raw": -3.691
+ },
+ {
+  "file": "gen_068.js",
+  "reward": 0.05,
+  "parts": {
+   "gate": 0.0,
+   "length": 1.0,
+   "checklist": 0.0,
+   "pairwise": 0.0,
+   "hps": 0.0
+  },
+  "items": {}
+ },
+ {
+  "file": "gen_069.js",
+  "reward": 0.6765,
+  "parts": {
+   "gate": 1.0,
+   "length": 1.0,
+   "checklist": 0.45,
+   "pairwise": 1.0,
+   "hps": 0.696
+  },
+  "items": {
+   "is_bicycle": false,
+   "two_wheels": true,
+   "wheels_apart": false,
+   "frame_spans": false,
+   "closed_frame": true
+  },
+  "hps_raw": -5.523
+ },
+ {
+  "file": "gen_070.js",
+  "reward": 0.05,
+  "parts": {
+   "gate": 0.0,
+   "length": 1.0,
+   "checklist": 0.0,
+   "pairwise": 0.0,
+   "hps": 0.0
+  },
+  "items": {}
+ },
+ {
+  "file": "gen_071.js",
+  "reward": 0.1533,
+  "parts": {
+   "gate": 1.0,
+   "length": 1.0,
+   "checklist": 0.1,
+   "pairwise": 0.0,
+   "hps": 0.033
+  },
+  "items": {
+   "is_bicycle": false,
+   "two_wheels": true,
+   "wheels_apart": false,
+   "frame_spans": false,
+   "closed_frame": false
+  },
+  "hps_raw": -9.524
+ },
+ {
+  "file": "gen_072.js",
+  "reward": 0.3,
+  "parts": {
+   "gate": 1.0,
+   "length": 1.0,
+   "checklist": 0.0,
+   "pairwise": 1.0,
+   "hps": 0.0
+  },
+  "items": {
+   "is_bicycle": false,
+   "two_wheels": false,
+   "wheels_apart": false,
+   "frame_spans": false,
+   "closed_frame": true
+  },
+  "hps_raw": -5.944
+ },
+ {
+  "file": "gen_073.js",
+  "reward": 0.05,
+  "parts": {
+   "gate": 0.0,
+   "length": 1.0,
+   "checklist": 0.0,
+   "pairwise": 0.0,
+   "hps": 0.0
+  },
+  "items": {}
+ },
+ {
+  "file": "gen_074.js",
+  "reward": 0.1828,
+  "parts": {
+   "gate": 1.0,
+   "length": 1.0,
+   "checklist": 0.0,
+   "pairwise": 0.0,
+   "hps": 0.331
+  },
+  "items": {
+   "is_bicycle": false,
+   "two_wheels": false,
+   "wheels_apart": false,
+   "frame_spans": false,
+   "closed_frame": false
+  },
+  "hps_raw": -3.757
+ },
+ {
+  "file": "gen_075.js",
+  "reward": 0.7463,
+  "parts": {
+   "gate": 1.0,
+   "length": 1.0,
+   "checklist": 0.55,
+   "pairwise": 1.0,
+   "hps": 0.795
+  },
+  "items": {
+   "is_bicycle": false,
+   "two_wheels": true,
+   "wheels_apart": true,
+   "frame_spans": true,
+   "closed_frame": false
+  },
+  "hps_raw": -0.693
+ },
+ {
+  "file": "gen_076.js",
+  "reward": 0.05,
+  "parts": {
+   "gate": 0.0,
+   "length": 1.0,
+   "checklist": 0.0,
+   "pairwise": 0.0,
+   "hps": 0.0
+  },
+  "items": {}
+ },
+ {
+  "file": "gen_077.js",
+  "reward": 0.05,
+  "parts": {
+   "gate": 0.0,
+   "length": 1.0,
+   "checklist": 0.0,
+   "pairwise": 0.0,
+   "hps": 0.0
+  },
+  "items": {}
+ },
+ {
+  "file": "gen_078.js",
+  "reward": 0.395,
+  "parts": {
+   "gate": 1.0,
+   "length": 1.0,
+   "checklist": 0.1,
+   "pairwise": 0.0,
+   "hps": 1.0
+  },
+  "items": {
+   "is_bicycle": false,
+   "two_wheels": false,
+   "wheels_apart": true,
+   "frame_spans": true,
+   "closed_frame": false
+  },
+  "hps_raw": 0.658
+ },
+ {
+  "file": "gen_079.js",
+  "reward": 0.05,
+  "parts": {
+   "gate": 0.0,
+   "length": 1.0,
+   "checklist": 0.0,
+   "pairwise": 0.0,
+   "hps": 0.0
+  },
+  "items": {}
+ },
+ {
+  "file": "gen_080.js",
+  "reward": 0.05,
+  "parts": {
+   "gate": 0.0,
+   "length": 1.0,
+   "checklist": 0.0,
+   "pairwise": 0.0,
+   "hps": 0.0
+  },
+  "items": {}
+ },
+ {
+  "file": "gen_081.js",
+  "reward": 0.145,
+  "parts": {
+   "gate": 1.0,
+   "length": 1.0,
+   "checklist": 0.1,
+   "pairwise": 0.0,
+   "hps": 0.0
+  },
+  "items": {
+   "is_bicycle": false,
+   "two_wheels": false,
+   "wheels_apart": true,
+   "frame_spans": true,
+   "closed_frame": false
+  },
+  "hps_raw": -8.157
+ },
+ {
+  "file": "gen_082.js",
+  "reward": 0.4198,
+  "parts": {
+   "gate": 1.0,
+   "length": 1.0,
+   "checklist": 0.1,
+   "pairwise": 1.0,
+   "hps": 0.299
+  },
+  "items": {
+   "is_bicycle": false,
+   "two_wheels": true,
+   "wheels_apart": false,
+   "frame_spans": false,
+   "closed_frame": false
+  },
+  "hps_raw": -7.301
+ },
+ {
+  "file": "gen_083.js",
+  "reward": 0.05,
+  "parts": {
+   "gate": 0.0,
+   "length": 1.0,
+   "checklist": 0.0,
+   "pairwise": 0.0,
+   "hps": 0.0
+  },
+  "items": {}
+ },
+ {
+  "file": "gen_084.js",
+  "reward": 0.31,
+  "parts": {
+   "gate": 1.0,
+   "length": 1.0,
+   "checklist": 0.2,
+   "pairwise": 0.5,
+   "hps": 0.08
+  },
+  "items": {
+   "is_bicycle": false,
+   "two_wheels": true,
+   "wheels_apart": true,
+   "frame_spans": false,
+   "closed_frame": false
+  },
+  "hps_raw": -7.927
+ },
+ {
+  "file": "gen_085.js",
+  "reward": 0.54,
+  "parts": {
+   "gate": 1.0,
+   "length": 1.0,
+   "checklist": 0.2,
+   "pairwise": 0.5,
+   "hps": 1.0
+  },
+  "items": {
+   "is_bicycle": true,
+   "two_wheels": false,
+   "wheels_apart": true,
+   "frame_spans": true,
+   "closed_frame": false
+  },
+  "hps_raw": -5.295
+ },
+ {
+  "file": "gen_086.js",
+  "reward": 0.05,
+  "parts": {
+   "gate": 0.0,
+   "length": 1.0,
+   "checklist": 0.0,
+   "pairwise": 0.0,
+   "hps": 0.0
+  },
+  "items": {}
+ },
+ {
+  "file": "gen_087.js",
+  "reward": 0.2177,
+  "parts": {
+   "gate": 1.0,
+   "length": 1.0,
+   "checklist": 0.0,
+   "pairwise": 0.0,
+   "hps": 0.471
+  },
+  "items": {
+   "is_bicycle": false,
+   "two_wheels": false,
+   "wheels_apart": false,
+   "frame_spans": false,
+   "closed_frame": false
+  },
+  "hps_raw": -6.808
+ },
+ {
+  "file": "gen_088.js",
+  "reward": 0.1273,
+  "parts": {
+   "gate": 1.0,
+   "length": 1.0,
+   "checklist": 0.0,
+   "pairwise": 0.0,
+   "hps": 0.109
+  },
+  "items": {
+   "is_bicycle": false,
+   "two_wheels": false,
+   "wheels_apart": false,
+   "frame_spans": false,
+   "closed_frame": false
+  },
+  "hps_raw": -8.112
+ },
+ {
+  "file": "gen_089.js",
+  "reward": 0.19,
+  "parts": {
+   "gate": 1.0,
+   "length": 1.0,
+   "checklist": 0.2,
+   "pairwise": 0.0,
+   "hps": 0.0
+  },
+  "items": {
+   "is_bicycle": false,
+   "two_wheels": true,
+   "wheels_apart": true,
+   "frame_spans": false,
+   "closed_frame": false
+  },
+  "hps_raw": -9.384
+ },
+ {
+  "file": "gen_090.js",
+  "reward": 0.05,
+  "parts": {
+   "gate": 0.0,
+   "length": 1.0,
+   "checklist": 0.0,
+   "pairwise": 0.0,
+   "hps": 0.0
+  },
+  "items": {}
+ },
+ {
+  "file": "gen_091.js",
+  "reward": 0.3023,
+  "parts": {
+   "gate": 1.0,
+   "length": 1.0,
+   "checklist": 0.0,
+   "pairwise": 1.0,
+   "hps": 0.009
+  },
+  "items": {
+   "is_bicycle": false,
+   "two_wheels": false,
+   "wheels_apart": false,
+   "frame_spans": false,
+   "closed_frame": true
+  },
+  "hps_raw": -9.279
+ },
+ {
+  "file": "gen_092.js",
+  "reward": 0.777,
+  "parts": {
+   "gate": 1.0,
+   "length": 1.0,
+   "checklist": 0.55,
+   "pairwise": 1.0,
+   "hps": 0.918
+  },
+  "items": {
+   "is_bicycle": false,
+   "two_wheels": true,
+   "wheels_apart": true,
+   "frame_spans": true,
+   "closed_frame": false
+  },
+  "hps_raw": 1.356
+ },
+ {
+  "file": "gen_093.js",
+  "reward": 0.2568,
+  "parts": {
+   "gate": 1.0,
+   "length": 1.0,
+   "checklist": 0.0,
+   "pairwise": 0.5,
+   "hps": 0.227
+  },
+  "items": {
+   "is_bicycle": false,
+   "two_wheels": false,
+   "wheels_apart": false,
+   "frame_spans": true,
+   "closed_frame": false
+  },
+  "hps_raw": -6.726
+ },
+ {
+  "file": "gen_094.js",
+  "reward": 0.64,
+  "parts": {
+   "gate": 1.0,
+   "length": 1.0,
+   "checklist": 0.2,
+   "pairwise": 1.0,
+   "hps": 1.0
+  },
+  "items": {
+   "is_bicycle": true,
+   "two_wheels": true,
+   "wheels_apart": false,
+   "frame_spans": false,
+   "closed_frame": false
+  },
+  "hps_raw": 2.314
+ },
+ {
+  "file": "gen_095.js",
+  "reward": 0.05,
+  "parts": {
+   "gate": 0.0,
+   "length": 1.0,
+   "checklist": 0.0,
+   "pairwise": 0.0,
+   "hps": 0.0
+  },
+  "items": {}
+ },
+ {
+  "file": "gen_096.js",
+  "reward": 0.05,
+  "parts": {
+   "gate": 0.0,
+   "length": 1.0,
+   "checklist": 0.0,
+   "pairwise": 0.0,
+   "hps": 0.0
+  },
+  "items": {}
+ },
+ {
+  "file": "gen_097.js",
+  "reward": 0.2845,
+  "parts": {
+   "gate": 1.0,
+   "length": 1.0,
+   "checklist": 0.1,
+   "pairwise": 0.0,
+   "hps": 0.558
+  },
+  "items": {
+   "is_bicycle": false,
+   "two_wheels": true,
+   "wheels_apart": false,
+   "frame_spans": false,
+   "closed_frame": false
+  },
+  "hps_raw": -4.058
+ },
+ {
+  "file": "gen_098.js",
+  "reward": 0.3,
+  "parts": {
+   "gate": 1.0,
+   "length": 1.0,
+   "checklist": 0.0,
+   "pairwise": 1.0,
+   "hps": 0.0
+  },
+  "items": {
+   "is_bicycle": false,
+   "two_wheels": false,
+   "wheels_apart": false,
+   "frame_spans": false,
+   "closed_frame": false
+  },
+  "hps_raw": -9.53
+ },
+ {
+  "file": "gen_099.js",
+  "reward": 0.3128,
+  "parts": {
+   "gate": 1.0,
+   "length": 1.0,
+   "checklist": 0.0,
+   "pairwise": 0.5,
+   "hps": 0.451
+  },
+  "items": {
+   "is_bicycle": false,
+   "two_wheels": false,
+   "wheels_apart": false,
+   "frame_spans": false,
+   "closed_frame": false
+  },
+  "hps_raw": -5.114
+ },
+ {
+  "file": "gen_100.js",
+  "reward": 0.2812,
+  "parts": {
+   "gate": 1.0,
+   "length": 1.0,
+   "checklist": 0.0,
+   "pairwise": 0.5,
+   "hps": 0.325
+  },
+  "items": {
+   "is_bicycle": false,
+   "two_wheels": false,
+   "wheels_apart": false,
+   "frame_spans": false,
+   "closed_frame": false
+  },
+  "hps_raw": -6.342
+ },
+ {
+  "file": "gen_101.js",
+  "reward": 0.05,
+  "parts": {
+   "gate": 0.0,
+   "length": 1.0,
+   "checklist": 0.0,
+   "pairwise": 0.0,
+   "hps": 0.0
+  },
+  "items": {}
+ },
+ {
+  "file": "gen_102.js",
+  "reward": 0.2133,
+  "parts": {
+   "gate": 1.0,
+   "length": 1.0,
+   "checklist": 0.1,
+   "pairwise": 0.0,
+   "hps": 0.273
+  },
+  "items": {
+   "is_bicycle": false,
+   "two_wheels": false,
+   "wheels_apart": true,
+   "frame_spans": false,
+   "closed_frame": false
+  },
+  "hps_raw": -6.853
+ },
+ {
+  "file": "gen_103.js",
+  "reward": 0.7975,
+  "parts": {
+   "gate": 1.0,
+   "length": 1.0,
+   "checklist": 0.55,
+   "pairwise": 1.0,
+   "hps": 1.0
+  },
+  "items": {
+   "is_bicycle": false,
+   "two_wheels": true,
+   "wheels_apart": true,
+   "frame_spans": false,
+   "closed_frame": true
+  },
+  "hps_raw": 0.272
+ },
+ {
+  "file": "gen_104.js",
+  "reward": 0.05,
+  "parts": {
+   "gate": 0.0,
+   "length": 1.0,
+   "checklist": 0.0,
+   "pairwise": 0.0,
+   "hps": 0.0
+  },
+  "items": {}
+ },
+ {
+  "file": "gen_105.js",
+  "reward": 0.685,
+  "parts": {
+   "gate": 1.0,
+   "length": 1.0,
+   "checklist": 0.3,
+   "pairwise": 1.0,
+   "hps": 1.0
+  },
+  "items": {
+   "is_bicycle": true,
+   "two_wheels": true,
+   "wheels_apart": true,
+   "frame_spans": false,
+   "closed_frame": false
+  },
+  "hps_raw": 3.118
+ },
+ {
+  "file": "gen_106.js",
+  "reward": 0.39,
+  "parts": {
+   "gate": 1.0,
+   "length": 1.0,
+   "checklist": 0.2,
+   "pairwise": 1.0,
+   "hps": 0.0
+  },
+  "items": {
+   "is_bicycle": false,
+   "two_wheels": true,
+   "wheels_apart": true,
+   "frame_spans": false,
+   "closed_frame": false
+  },
+  "hps_raw": -7.699
+ },
+ {
+  "file": "gen_107.js",
+  "reward": 0.2722,
+  "parts": {
+   "gate": 1.0,
+   "length": 1.0,
+   "checklist": 0.0,
+   "pairwise": 0.0,
+   "hps": 0.689
+  },
+  "items": {
+   "is_bicycle": false,
+   "two_wheels": false,
+   "wheels_apart": false,
+   "frame_spans": true,
+   "closed_frame": true
+  },
+  "hps_raw": -0.249
+ },
+ {
+  "file": "gen_108.js",
+  "reward": 0.05,
+  "parts": {
+   "gate": 0.0,
+   "length": 1.0,
+   "checklist": 0.0,
+   "pairwise": 0.0,
+   "hps": 0.0
+  },
+  "items": {}
+ },
+ {
+  "file": "gen_109.js",
+  "reward": 0.2698,
+  "parts": {
+   "gate": 1.0,
+   "length": 1.0,
+   "checklist": 0.0,
+   "pairwise": 0.5,
+   "hps": 0.279
+  },
+  "items": {
+   "is_bicycle": false,
+   "two_wheels": false,
+   "wheels_apart": false,
+   "frame_spans": false,
+   "closed_frame": false
+  },
+  "hps_raw": -4.686
+ },
+ {
+  "file": "gen_110.js",
+  "reward": 0.3715,
+  "parts": {
+   "gate": 1.0,
+   "length": 1.0,
+   "checklist": 0.1,
+   "pairwise": 1.0,
+   "hps": 0.106
+  },
+  "items": {
+   "is_bicycle": false,
+   "two_wheels": false,
+   "wheels_apart": true,
+   "frame_spans": true,
+   "closed_frame": false
+  },
+  "hps_raw": -6.548
+ },
+ {
+  "file": "gen_111.js",
+  "reward": 0.05,
+  "parts": {
+   "gate": 0.0,
+   "length": 1.0,
+   "checklist": 0.0,
+   "pairwise": 0.0,
+   "hps": 0.0
+  },
+  "items": {}
+ },
+ {
+  "file": "gen_112.js",
+  "reward": 0.6288,
+  "parts": {
+   "gate": 1.0,
+   "length": 1.0,
+   "checklist": 0.3,
+   "pairwise": 1.0,
+   "hps": 0.775
+  },
+  "items": {
+   "is_bicycle": true,
+   "two_wheels": true,
+   "wheels_apart": true,
+   "frame_spans": false,
+   "closed_frame": false
+  },
+  "hps_raw": 0.131
+ },
+ {
+  "file": "gen_113.js",
+  "reward": 0.05,
+  "parts": {
+   "gate": 0.0,
+   "length": 1.0,
+   "checklist": 0.0,
+   "pairwise": 0.0,
+   "hps": 0.0
+  },
+  "items": {}
+ },
+ {
+  "file": "gen_114.js",
+  "reward": 0.1,
+  "parts": {
+   "gate": 1.0,
+   "length": 1.0,
+   "checklist": 0.0,
+   "pairwise": 0.0,
+   "hps": 0.0
+  },
+  "items": {
+   "is_bicycle": false,
+   "two_wheels": false,
+   "wheels_apart": false,
+   "frame_spans": false,
+   "closed_frame": false
+  },
+  "hps_raw": -3.989
+ },
+ {
+  "file": "gen_115.js",
+  "reward": 0.05,
+  "parts": {
+   "gate": 0.0,
+   "length": 1.0,
+   "checklist": 0.0,
+   "pairwise": 0.0,
+   "hps": 0.0
+  },
+  "items": {}
+ },
+ {
+  "file": "gen_116.js",
+  "reward": 0.4808,
+  "parts": {
+   "gate": 1.0,
+   "length": 1.0,
+   "checklist": 0.1,
+   "pairwise": 1.0,
+   "hps": 0.543
+  },
+  "items": {
+   "is_bicycle": false,
+   "two_wheels": false,
+   "wheels_apart": true,
+   "frame_spans": false,
+   "closed_frame": false
+  },
+  "hps_raw": -1.102
+ },
+ {
+  "file": "gen_117.js",
+  "reward": 0.8425,
+  "parts": {
+   "gate": 1.0,
+   "length": 1.0,
+   "checklist": 0.65,
+   "pairwise": 1.0,
+   "hps": 1.0
+  },
+  "items": {
+   "is_bicycle": true,
+   "two_wheels": true,
+   "wheels_apart": true,
+   "frame_spans": true,
+   "closed_frame": false
+  },
+  "hps_raw": 1.325
+ },
+ {
+  "file": "gen_118.js",
+  "reward": 0.05,
+  "parts": {
+   "gate": 0.0,
+   "length": 1.0,
+   "checklist": 0.0,
+   "pairwise": 0.0,
+   "hps": 0.0
+  },
+  "items": {}
+ },
+ {
+  "file": "gen_119.js",
+  "reward": 0.05,
+  "parts": {
+   "gate": 0.0,
+   "length": 1.0,
+   "checklist": 0.0,
+   "pairwise": 0.0,
+   "hps": 0.0
+  },
+  "items": {}
+ },
+ {
+  "file": "gen_120.js",
+  "reward": 0.05,
+  "parts": {
+   "gate": 0.0,
+   "length": 1.0,
+   "checklist": 0.0,
+   "pairwise": 0.0,
+   "hps": 0.0
+  },
+  "items": {}
+ },
+ {
+  "file": "gen_121.js",
+  "reward": 0.3,
+  "parts": {
+   "gate": 1.0,
+   "length": 1.0,
+   "checklist": 0.0,
+   "pairwise": 1.0,
+   "hps": 0.0
+  },
+  "items": {
+   "is_bicycle": false,
+   "two_wheels": false,
+   "wheels_apart": false,
+   "frame_spans": false,
+   "closed_frame": false
+  },
+  "hps_raw": -10.282
+ },
+ {
+  "file": "gen_122.js",
+  "reward": 0.05,
+  "parts": {
+   "gate": 0.0,
+   "length": 1.0,
+   "checklist": 0.0,
+   "pairwise": 0.0,
+   "hps": 0.0
+  },
+  "items": {}
+ },
+ {
+  "file": "gen_123.js",
+  "reward": 0.05,
+  "parts": {
+   "gate": 0.0,
+   "length": 1.0,
+   "checklist": 0.0,
+   "pairwise": 0.0,
+   "hps": 0.0
+  },
+  "items": {}
+ },
+ {
+  "file": "gen_124.js",
+  "reward": 0.334,
+  "parts": {
+   "gate": 1.0,
+   "length": 1.0,
+   "checklist": 0.0,
+   "pairwise": 0.0,
+   "hps": 0.936
+  },
+  "items": {
+   "is_bicycle": false,
+   "two_wheels": false,
+   "wheels_apart": false,
+   "frame_spans": true,
+   "closed_frame": true
+  },
+  "hps_raw": -4.551
+ },
+ {
+  "file": "gen_125.js",
+  "reward": 0.35,
+  "parts": {
+   "gate": 1.0,
+   "length": 1.0,
+   "checklist": 0.0,
+   "pairwise": 0.0,
+   "hps": 1.0
+  },
+  "items": {
+   "is_bicycle": false,
+   "two_wheels": false,
+   "wheels_apart": false,
+   "frame_spans": false,
+   "closed_frame": false
+  },
+  "hps_raw": -4.162
+ },
+ {
+  "file": "gen_126.js",
+  "reward": 0.05,
+  "parts": {
+   "gate": 0.0,
+   "length": 1.0,
+   "checklist": 0.0,
+   "pairwise": 0.0,
+   "hps": 0.0
+  },
+  "items": {}
+ },
+ {
+  "file": "gen_127.js",
+  "reward": 0.101,
+  "parts": {
+   "gate": 1.0,
+   "length": 1.0,
+   "checklist": 0.0,
+   "pairwise": 0.0,
+   "hps": 0.004
+  },
+  "items": {
+   "is_bicycle": false,
+   "two_wheels": false,
+   "wheels_apart": false,
+   "frame_spans": false,
+   "closed_frame": false
+  },
+  "hps_raw": -10.255
+ }
+]

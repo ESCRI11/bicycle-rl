@@ -21,11 +21,22 @@ if [ "$have" -gt 0 ]; then
   fi
 fi
 
+# A silent mirror is worse than no mirror: this loop once ran for three hours against a box
+# that had been reclaimed, printing nothing, while it looked alive in `pgrep`. Failures are
+# loud now, and the message says how long it has been since the last good pull.
+fails=0; last=$(date +%s)
 while true; do
-  if rsync -az --exclude '*/tokens.pt' --exclude 'checkpoints/*/optimizer*' "$HOST:~/bicycle-rl/bike/run/" "$DEST/" 2>/dev/null; then
+  if err=$(rsync -az --exclude '*/tokens.pt' --exclude 'checkpoints/*/optimizer*' \
+             "$HOST:~/bicycle-rl/bike/run/" "$DEST/" 2>&1); then
+    fails=0; last=$(date +%s)
     n=$(ls "$DEST/samples" 2>/dev/null | wc -l)
     s=$(python3 -c "import json;print(json.load(open('$DEST/state.json'))['step'])" 2>/dev/null || echo ?)
     echo "$(date +%H:%M:%S) pulled: step $s, $n sample sheets -> $DEST"
+  else
+    fails=$((fails + 1))
+    echo "$(date +%H:%M:%S) PULL FAILED (${fails}x, $(( ($(date +%s) - last) / 60 ))m since last good pull)"
+    echo "  ${err##*$'\n'}"
+    [ "$fails" = 3 ] && echo "  three in a row — the box is probably gone. The mirror is your copy."
   fi
   sleep "$EVERY"
 done

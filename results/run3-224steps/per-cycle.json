@@ -1,0 +1,183 @@
+{
+ "steps": 224,
+ "prompt": "v2.1",
+ "checklist": "tiered",
+ "weights": {
+  "gate": 0.05,
+  "length": 0.05,
+  "checklist": 0.45,
+  "pairwise": 0.2,
+  "hps": 0.25
+ },
+ "ended": "box reclaimed at cycle 13 of 20; IP reassigned",
+ "cycles": [
+  {
+   "cycle": "000",
+   "n": 128,
+   "mean_reward": 0.2116,
+   "gate": 0.453,
+   "checklist_mean": 0.084,
+   "paint": 108,
+   "judged_bicycle": 9,
+   "two_wheels": 26,
+   "closed_frame": 11,
+   "hps_raw_mean": -4.85
+  },
+  {
+   "cycle": "001",
+   "n": 128,
+   "mean_reward": 0.2048,
+   "gate": 0.43,
+   "checklist_mean": 0.0703,
+   "paint": 102,
+   "judged_bicycle": 10,
+   "two_wheels": 25,
+   "closed_frame": 10,
+   "hps_raw_mean": -4.95
+  },
+  {
+   "cycle": "002",
+   "n": 128,
+   "mean_reward": 0.1714,
+   "gate": 0.414,
+   "checklist_mean": 0.0422,
+   "paint": 97,
+   "judged_bicycle": 1,
+   "two_wheels": 19,
+   "closed_frame": 7,
+   "hps_raw_mean": -6.11
+  },
+  {
+   "cycle": "003",
+   "n": 128,
+   "mean_reward": 0.2293,
+   "gate": 0.5,
+   "checklist_mean": 0.0953,
+   "paint": 96,
+   "judged_bicycle": 10,
+   "two_wheels": 30,
+   "closed_frame": 10,
+   "hps_raw_mean": -5.51
+  },
+  {
+   "cycle": "004",
+   "n": 128,
+   "mean_reward": 0.2477,
+   "gate": 0.586,
+   "checklist_mean": 0.0902,
+   "paint": 99,
+   "judged_bicycle": 8,
+   "two_wheels": 29,
+   "closed_frame": 10,
+   "hps_raw_mean": -5.48
+  },
+  {
+   "cycle": "005",
+   "n": 128,
+   "mean_reward": 0.2533,
+   "gate": 0.602,
+   "checklist_mean": 0.0988,
+   "paint": 101,
+   "judged_bicycle": 14,
+   "two_wheels": 34,
+   "closed_frame": 15,
+   "hps_raw_mean": -4.9
+  },
+  {
+   "cycle": "006",
+   "n": 128,
+   "mean_reward": 0.2757,
+   "gate": 0.602,
+   "checklist_mean": 0.1313,
+   "paint": 103,
+   "judged_bicycle": 13,
+   "two_wheels": 36,
+   "closed_frame": 13,
+   "hps_raw_mean": -5.01
+  },
+  {
+   "cycle": "007",
+   "n": 128,
+   "mean_reward": 0.3148,
+   "gate": 0.727,
+   "checklist_mean": 0.1527,
+   "paint": 102,
+   "judged_bicycle": 19,
+   "two_wheels": 40,
+   "closed_frame": 14,
+   "hps_raw_mean": -5.31
+  },
+  {
+   "cycle": "008",
+   "n": 128,
+   "mean_reward": 0.3372,
+   "gate": 0.75,
+   "checklist_mean": 0.1711,
+   "paint": 103,
+   "judged_bicycle": 24,
+   "two_wheels": 53,
+   "closed_frame": 12,
+   "hps_raw_mean": -4.49
+  },
+  {
+   "cycle": "009",
+   "n": 128,
+   "mean_reward": 0.3504,
+   "gate": 0.766,
+   "checklist_mean": 0.2094,
+   "paint": 115,
+   "judged_bicycle": 27,
+   "two_wheels": 57,
+   "closed_frame": 15,
+   "hps_raw_mean": -4.19
+  },
+  {
+   "cycle": "010",
+   "n": 128,
+   "mean_reward": 0.3462,
+   "gate": 0.797,
+   "checklist_mean": 0.2051,
+   "paint": 111,
+   "judged_bicycle": 22,
+   "two_wheels": 56,
+   "closed_frame": 14,
+   "hps_raw_mean": -4.75
+  },
+  {
+   "cycle": "011",
+   "n": 128,
+   "mean_reward": 0.3988,
+   "gate": 0.898,
+   "checklist_mean": 0.2867,
+   "paint": 109,
+   "judged_bicycle": 43,
+   "two_wheels": 73,
+   "closed_frame": 23,
+   "hps_raw_mean": -4.31
+  },
+  {
+   "cycle": "012",
+   "n": 128,
+   "mean_reward": 0.4385,
+   "gate": 0.938,
+   "checklist_mean": 0.309,
+   "paint": 112,
+   "judged_bicycle": 51,
+   "two_wheels": 83,
+   "closed_frame": 24,
+   "hps_raw_mean": -3.13
+  },
+  {
+   "cycle": "013",
+   "n": 128,
+   "mean_reward": 0.4857,
+   "gate": 0.977,
+   "checklist_mean": 0.3738,
+   "paint": 105,
+   "judged_bicycle": 77,
+   "two_wheels": 107,
+   "closed_frame": 27,
+   "hps_raw_mean": -2.24
+  }
+ ]
+}
