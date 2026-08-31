@@ -7,8 +7,17 @@
    "mean_reward": 0.2836,
    "gate": 0.641,
    "checklist_mean": 0.0703,
-   "judged_bicycle": 0,
-   "perfect_checklist": 0
+   "paint": 128,
+   "distinct_fill_args": 27,
+   "is_bicycle": null,
+   "two_wheels": null,
+   "wheels_apart": null,
+   "frame_spans": null,
+   "closed_frame": null,
+   "all_five": null,
+   "hps_raw_mean": null,
+   "legacy_judged_bicycle": 0,
+   "legacy_perfect_checklist": 0
   },
   {
    "cycle": "001",
@@ -16,8 +25,17 @@
    "mean_reward": 0.2726,
    "gate": 0.578,
    "checklist_mean": 0.0833,
-   "judged_bicycle": 0,
-   "perfect_checklist": 0
+   "paint": 127,
+   "distinct_fill_args": 26,
+   "is_bicycle": null,
+   "two_wheels": null,
+   "wheels_apart": null,
+   "frame_spans": null,
+   "closed_frame": null,
+   "all_five": null,
+   "hps_raw_mean": null,
+   "legacy_judged_bicycle": 0,
+   "legacy_perfect_checklist": 0
   },
   {
    "cycle": "002",
@@ -25,8 +43,17 @@
    "mean_reward": 0.2531,
    "gate": 0.547,
    "checklist_mean": 0.0547,
-   "judged_bicycle": 0,
-   "perfect_checklist": 0
+   "paint": 128,
+   "distinct_fill_args": 39,
+   "is_bicycle": null,
+   "two_wheels": null,
+   "wheels_apart": null,
+   "frame_spans": null,
+   "closed_frame": null,
+   "all_five": null,
+   "hps_raw_mean": null,
+   "legacy_judged_bicycle": 0,
+   "legacy_perfect_checklist": 0
   },
   {
    "cycle": "003",
@@ -34,8 +61,17 @@
    "mean_reward": 0.332,
    "gate": 0.703,
    "checklist_mean": 0.0729,
-   "judged_bicycle": 0,
-   "perfect_checklist": 0
+   "paint": 128,
+   "distinct_fill_args": 20,
+   "is_bicycle": null,
+   "two_wheels": null,
+   "wheels_apart": null,
+   "frame_spans": null,
+   "closed_frame": null,
+   "all_five": null,
+   "hps_raw_mean": null,
+   "legacy_judged_bicycle": 0,
+   "legacy_perfect_checklist": 0
   },
   {
    "cycle": "004",
@@ -43,8 +79,17 @@
    "mean_reward": 0.3473,
    "gate": 0.727,
    "checklist_mean": 0.0963,
-   "judged_bicycle": 0,
-   "perfect_checklist": 0
+   "paint": 128,
+   "distinct_fill_args": 24,
+   "is_bicycle": null,
+   "two_wheels": null,
+   "wheels_apart": null,
+   "frame_spans": null,
+   "closed_frame": null,
+   "all_five": null,
+   "hps_raw_mean": null,
+   "legacy_judged_bicycle": 0,
+   "legacy_perfect_checklist": 0
   },
   {
    "cycle": "005",
@@ -52,8 +97,17 @@
    "mean_reward": 0.3449,
    "gate": 0.695,
    "checklist_mean": 0.1171,
-   "judged_bicycle": 0,
-   "perfect_checklist": 0
+   "paint": 128,
+   "distinct_fill_args": 37,
+   "is_bicycle": null,
+   "two_wheels": null,
+   "wheels_apart": null,
+   "frame_spans": null,
+   "closed_frame": null,
+   "all_five": null,
+   "hps_raw_mean": null,
+   "legacy_judged_bicycle": 0,
+   "legacy_perfect_checklist": 0
   },
   {
    "cycle": "006",
@@ -61,8 +115,17 @@
    "mean_reward": 0.3266,
    "gate": 0.766,
    "checklist_mean": 0.0755,
-   "judged_bicycle": 0,
-   "perfect_checklist": 0
+   "paint": 128,
+   "distinct_fill_args": 31,
+   "is_bicycle": null,
+   "two_wheels": null,
+   "wheels_apart": null,
+   "frame_spans": null,
+   "closed_frame": null,
+   "all_five": null,
+   "hps_raw_mean": null,
+   "legacy_judged_bicycle": 0,
+   "legacy_perfect_checklist": 0
   },
   {
    "cycle": "007",
@@ -70,8 +133,17 @@
    "mean_reward": 0.3301,
    "gate": 0.789,
    "checklist_mean": 0.0911,
-   "judged_bicycle": 0,
-   "perfect_checklist": 0
+   "paint": 128,
+   "distinct_fill_args": 36,
+   "is_bicycle": null,
+   "two_wheels": null,
+   "wheels_apart": null,
+   "frame_spans": null,
+   "closed_frame": null,
+   "all_five": null,
+   "hps_raw_mean": null,
+   "legacy_judged_bicycle": 0,
+   "legacy_perfect_checklist": 0
   },
   {
    "cycle": "008",
@@ -79,8 +151,17 @@
    "mean_reward": 0.3805,
    "gate": 0.812,
    "checklist_mean": 0.1145,
-   "judged_bicycle": 0,
-   "perfect_checklist": 1
+   "paint": 128,
+   "distinct_fill_args": 49,
+   "is_bicycle": null,
+   "two_wheels": null,
+   "wheels_apart": null,
+   "frame_spans": null,
+   "closed_frame": null,
+   "all_five": null,
+   "hps_raw_mean": null,
+   "legacy_judged_bicycle": 0,
+   "legacy_perfect_checklist": 1
   },
   {
    "cycle": "009",
@@ -88,8 +169,17 @@
    "mean_reward": 0.3715,
    "gate": 0.836,
    "checklist_mean": 0.1041,
-   "judged_bicycle": 0,
-   "perfect_checklist": 0
+   "paint": 128,
+   "distinct_fill_args": 43,
+   "is_bicycle": null,
+   "two_wheels": null,
+   "wheels_apart": null,
+   "frame_spans": null,
+   "closed_frame": null,
+   "all_five": null,
+   "hps_raw_mean": null,
+   "legacy_judged_bicycle": 0,
+   "legacy_perfect_checklist": 0
   },
   {
    "cycle": "010",
@@ -97,8 +187,17 @@
    "mean_reward": 0.3813,
    "gate": 0.828,
    "checklist_mean": 0.1223,
-   "judged_bicycle": 0,
-   "perfect_checklist": 0
+   "paint": 128,
+   "distinct_fill_args": 38,
+   "is_bicycle": null,
+   "two_wheels": null,
+   "wheels_apart": null,
+   "frame_spans": null,
+   "closed_frame": null,
+   "all_five": null,
+   "hps_raw_mean": null,
+   "legacy_judged_bicycle": 0,
+   "legacy_perfect_checklist": 0
   },
   {
    "cycle": "011",
@@ -106,8 +205,17 @@
    "mean_reward": 0.3691,
    "gate": 0.852,
    "checklist_mean": 0.1406,
-   "judged_bicycle": 0,
-   "perfect_checklist": 2
+   "paint": 127,
+   "distinct_fill_args": 16,
+   "is_bicycle": null,
+   "two_wheels": null,
+   "wheels_apart": null,
+   "frame_spans": null,
+   "closed_frame": null,
+   "all_five": null,
+   "hps_raw_mean": null,
+   "legacy_judged_bicycle": 0,
+   "legacy_perfect_checklist": 2
   },
   {
    "cycle": "012",
@@ -115,8 +223,17 @@
    "mean_reward": 0.3836,
    "gate": 0.891,
    "checklist_mean": 0.151,
-   "judged_bicycle": 0,
-   "perfect_checklist": 1
+   "paint": 128,
+   "distinct_fill_args": 18,
+   "is_bicycle": null,
+   "two_wheels": null,
+   "wheels_apart": null,
+   "frame_spans": null,
+   "closed_frame": null,
+   "all_five": null,
+   "hps_raw_mean": null,
+   "legacy_judged_bicycle": 0,
+   "legacy_perfect_checklist": 1
   },
   {
    "cycle": "013",
@@ -124,8 +241,17 @@
    "mean_reward": 0.4145,
    "gate": 0.914,
    "checklist_mean": 0.1562,
-   "judged_bicycle": 0,
-   "perfect_checklist": 0
+   "paint": 128,
+   "distinct_fill_args": 19,
+   "is_bicycle": null,
+   "two_wheels": null,
+   "wheels_apart": null,
+   "frame_spans": null,
+   "closed_frame": null,
+   "all_five": null,
+   "hps_raw_mean": null,
+   "legacy_judged_bicycle": 0,
+   "legacy_perfect_checklist": 0
   },
   {
    "cycle": "014",
@@ -133,8 +259,15 @@
    "mean_reward": 0.4355,
    "gate": 0.898,
    "checklist_mean": 0.1588,
-   "judged_bicycle": 4,
-   "perfect_checklist": 0
+   "paint": 128,
+   "distinct_fill_args": 18,
+   "is_bicycle": 4,
+   "two_wheels": 51,
+   "wheels_apart": 0,
+   "frame_spans": 0,
+   "closed_frame": 6,
+   "all_five": 0,
+   "hps_raw_mean": null
   },
   {
    "cycle": "015",
@@ -142,8 +275,15 @@
    "mean_reward": 0.4344,
    "gate": 0.938,
    "checklist_mean": 0.203,
-   "judged_bicycle": 9,
-   "perfect_checklist": 0
+   "paint": 128,
+   "distinct_fill_args": 12,
+   "is_bicycle": 9,
+   "two_wheels": 59,
+   "wheels_apart": 0,
+   "frame_spans": 0,
+   "closed_frame": 10,
+   "all_five": 0,
+   "hps_raw_mean": null
   },
   {
    "cycle": "016",
@@ -151,8 +291,15 @@
    "mean_reward": 0.4395,
    "gate": 0.883,
    "checklist_mean": 0.19,
-   "judged_bicycle": 7,
-   "perfect_checklist": 0
+   "paint": 128,
+   "distinct_fill_args": 19,
+   "is_bicycle": 7,
+   "two_wheels": 52,
+   "wheels_apart": 0,
+   "frame_spans": 0,
+   "closed_frame": 14,
+   "all_five": 0,
+   "hps_raw_mean": null
   },
   {
    "cycle": "017",
@@ -160,8 +307,15 @@
    "mean_reward": 0.4484,
    "gate": 0.922,
    "checklist_mean": 0.2134,
-   "judged_bicycle": 9,
-   "perfect_checklist": 3
+   "paint": 128,
+   "distinct_fill_args": 14,
+   "is_bicycle": 9,
+   "two_wheels": 60,
+   "wheels_apart": 0,
+   "frame_spans": 0,
+   "closed_frame": 13,
+   "all_five": 3,
+   "hps_raw_mean": null
   },
   {
    "cycle": "018",
@@ -169,8 +323,15 @@
    "mean_reward": 0.4305,
    "gate": 0.938,
    "checklist_mean": 0.2291,
-   "judged_bicycle": 7,
-   "perfect_checklist": 0
+   "paint": 128,
+   "distinct_fill_args": 27,
+   "is_bicycle": 7,
+   "two_wheels": 68,
+   "wheels_apart": 0,
+   "frame_spans": 0,
+   "closed_frame": 13,
+   "all_five": 0,
+   "hps_raw_mean": null
   },
   {
    "cycle": "019",
@@ -178,8 +339,15 @@
    "mean_reward": 0.4867,
    "gate": 0.969,
    "checklist_mean": 0.2551,
-   "judged_bicycle": 9,
-   "perfect_checklist": 0
+   "paint": 128,
+   "distinct_fill_args": 11,
+   "is_bicycle": 9,
+   "two_wheels": 74,
+   "wheels_apart": 0,
+   "frame_spans": 0,
+   "closed_frame": 15,
+   "all_five": 0,
+   "hps_raw_mean": null
   }
  ]
 }

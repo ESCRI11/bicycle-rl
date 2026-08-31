@@ -2,11 +2,16 @@
 # Mirror the training run off the box, forever. The box is rented and can disappear with no
 # notice; every sample, reward, adapter and log has to exist here too.
 #
-#   ./box/pull.sh ubuntu@216.81.200.38 &        # every 5 min by default
+#   ./box/pull.sh ubuntu@216.81.200.38 &            # every 5 min, into runs/<ip>
+#   ./box/pull.sh ubuntu@216.81.200.38 300 run4     # into runs/run4 — prefer this
+#
+# Name the run. Mirrors keyed by IP address are unreadable a week later, and a run that
+# spans two boxes ends up in two directories that nothing connects.
 set -uo pipefail
-HOST=${1:?usage: pull.sh user@host [seconds]}
+HOST=${1:?usage: pull.sh user@host [seconds] [run-name]}
 EVERY=${2:-300}
-DEST="$(cd "$(dirname "$0")/.." && pwd)/runs/$(echo "$HOST" | tr '@.:' '___')"
+NAME=${3:-$(echo "$HOST" | tr '@.:' '___')}
+DEST="$(cd "$(dirname "$0")/.." && pwd)/runs/$NAME"
 mkdir -p "$DEST"
 # never let an empty or younger run overwrite a finished one: a re-rented box can come back
 # on an IP we have already mirrored, and DEST is derived from that IP

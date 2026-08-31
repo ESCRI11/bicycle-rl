@@ -95,7 +95,7 @@ metric = gate + the new checklist, judge local and free.
 
 ## Stage 6 — training, warm start  ·  ~7 h, one A100
 
-Continue from `runs/ubuntu_216_81_200_38/lora` rather than starting fresh — the 0.64 → 0.97
+Continue from `runs/run1/lora` rather than starting fresh — the 0.64 → 0.97
 gate learning is paid for, no reason to buy it twice. Reward changes:
 
 - **gate becomes a multiplier, not a component.** It is at 0.97; it no longer needs weight,

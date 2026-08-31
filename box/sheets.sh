@@ -3,7 +3,7 @@
 # whatever has been pulled down, which is the copy that survives the box being killed.
 set -uo pipefail
 cd "$(cd "$(dirname "$0")/.." && pwd)"
-D=runs/ubuntu_216_81_200_38
+D=${1:-runs/run1}
 mkdir -p "$D/samples"
 for c in "$D"/cycles/*/; do
   n=$(basename "$c"); step=$(( (10#$n + 1) * 16 ))
