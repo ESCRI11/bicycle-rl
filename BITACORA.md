@@ -1656,3 +1656,52 @@ and before typing a password into one.
 
 **Sixth for six.** The tally from entry 024 stands: another surprising signal (the mirror
 "working" for three hours) that was our own plumbing.
+
+---
+
+## 027 — 2026-08-31 — Run 3 finishes: 91% bicycles, and all of them painted
+
+Resumed on a second box and ran cycles 14-19 to step 320. The whole run:
+
+| cycle | rendered | reward | checklist | paint | judged-bike | two-wheels | closed-frame | HPS raw |
+|---|---|---|---|---|---|---|---|---|
+| 000 | 58 | 0.212 | 0.084 | 108 | 9 | 26 | 11 | −4.85 |
+| 006 | 77 | 0.276 | 0.131 | 103 | 13 | 36 | 13 | −5.01 |
+| 013 | 125 | 0.486 | 0.374 | 105 | 77 | 107 | 27 | −2.24 |
+| 016 | 127 | 0.539 | 0.443 | 127 | 106 | 117 | 36 | — |
+| 019 | 124 | 0.611 | 0.621 | **128** | **117** | 122 | **78** | **+3.95** |
+
+**Every claim v3 was built to test came back yes.** 128 of 128 samples still call
+`brush.fill` — run 2 ended at 4. The checklist finished at 0.621 against run 2's 0.544, so
+the colour cost nothing structurally. 91% of the final batch was judged a bicycle, against
+72%. And 98 samples scored all five checklist items, against run 2's 64.
+
+**I was wrong about the HPS curve.** I said the in-group min-max normalisation meant HPS
+would preserve paint without showing as a rising absolute score, since the policy is only
+ever rewarded for beating its seven siblings. The raw mean went **−4.85 → +3.95** — a gold
+reference photograph scores 6.94 and two bare circles −5.16. Relative rewards moved the
+absolute number a long way; the group is a moving target, and it moved.
+
+**The beautiful-wheels trap resolved itself.** Entry 026 flagged `closed_frame` lagging
+`two_wheels` 1:4 and proposed gating HPS behind `frame_spans` for v4. Over the last six
+cycles the frame count went 27 → 78 while two-wheels saturated at ~122, closing the ratio to
+1:1.6. The aesthetic term reached wheels first because wheels are the cheapest pretty thing
+to draw, not because it was stuck there. **v4 does not need the gate.** Worth keeping as
+evidence that a mid-run ratio is not a converged one — the fix would have been real work
+solving a problem that six more cycles dissolved.
+
+**Dead end — the mirror hung instead of failing.** Closing the laptop suspended WSL2 and
+froze rsync's TCP connection. `pull.sh` sat in it for 32 minutes: alive in `pgrep`, silent in
+the log, mirroring nothing. Entry 026's fix made *errors* loud, but a hang is neither success
+nor error. Now `timeout 600` plus ssh keepalives, so a frozen connection becomes an error the
+loop can report.
+
+Second lesson in the same hour: `pkill -f "[p]ull.sh"` killed **my own shell**, because the
+command line that ran it also contained the string `pull.sh` further along. The `[p]` trick
+only hides the pattern from itself, not from the rest of the command. Exit 144, and the edit
+and restart that followed it never ran.
+
+**Where run 3 lives.** Cycles 0-13 came off the first box and 14-19 off the second; both
+mirrors are merged into `runs/ubuntu_64_247_196_67/` so the run reads as one thing, with
+`results/run3-320steps/` holding the committed part. Adapters for all three runs are still on
+one disk each — the Hugging Face upload is the last open task.
