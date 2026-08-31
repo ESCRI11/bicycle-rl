@@ -26,7 +26,12 @@ fi
 # loud now, and the message says how long it has been since the last good pull.
 fails=0; last=$(date +%s)
 while true; do
-  if err=$(rsync -az --exclude '*/tokens.pt' --exclude 'checkpoints/*/optimizer*' \
+  # timeout + keepalives: suspending the laptop freezes the TCP connection and a plain rsync
+  # then blocks forever — alive in `pgrep`, silent in the log, mirroring nothing. Same silent
+  # failure as before, wearing a different hat: a hang is neither success nor error.
+  if err=$(timeout 600 rsync -az \
+             -e 'ssh -o BatchMode=yes -o ConnectTimeout=20 -o ServerAliveInterval=15 -o ServerAliveCountMax=3' \
+             --exclude '*/tokens.pt' --exclude 'checkpoints/*/optimizer*' \
              "$HOST:~/bicycle-rl/bike/run/" "$DEST/" 2>&1); then
     fails=0; last=$(date +%s)
     n=$(ls "$DEST/samples" 2>/dev/null | wc -l)
