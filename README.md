@@ -1,32 +1,31 @@
 # bicycle-rl
 
-Teaching a model to draw with code, following
+Teaching a small model to draw with code, following
 <https://surya.website/rling-qwen-to-paint-with-code>: model writes a sketch → render it
 headlessly → judge the image → reward → repeat.
 
-**Current target: a bicycle, side view, ink line drawing, in p5.brush** — see [`bike/`](bike/).
+**The target: a bicycle, side view, painted in p5.brush** — see [`bike/`](bike/).
 Bicycles because almost nobody can draw one from memory
 ([Velocipedia](https://www.gianlucagimini.it/portfolio-item/velocipedia/)), so the failures
 are legible and the judging is fast.
+
+Three GRPO runs of 320 steps each on `Qwen2.5-Coder-7B-Instruct`. The base model draws
+**0 recognisable bicycles in 50**; run 3 finished with **117 of 128** judged a bicycle, and
+still painting. The comparison, and what each run's reward bought, is in
+[`results/README.md`](results/README.md). Adapters:
+[run1](https://huggingface.co/ESCRI11/bicycle-rl-run1) ·
+[run2](https://huggingface.co/ESCRI11/bicycle-rl-run2) ·
+[run3](https://huggingface.co/ESCRI11/bicycle-rl-run3).
 
 ## Layout
 
 - `AGENTS.md` — how we work here. Read it first.
 - `BITACORA.md` — lab notebook, becomes the blog post. Every session appends to it.
-- `bike/` — the current target: harness, renderer, reference sketches ([its own README](bike/README.md))
-- `corpus/` — **parked.** Hydra sketch harvest + curation wireframe ([its own README](corpus/README.md))
-- `data/` — final `{"prompt": ..., "code": ...}` pairs (jsonl), exported from `corpus/`
-- `train/` — LoRA config + training script
-- `eval/` — render sketches headlessly, eyeball the grid
-
-Where we are: the render loop works end to end (`bike/render.py`). Next is a base-model
-baseline batch. `train/` and `eval/` are still just the plan.
-
-## Notes — the parked hydra branch
-
-Hydra is a JS DSL, so the base model already knows the syntax shape; the LoRA is
-for style and for the operators it hallucinates wrong (`modulateScrollY`, `kaleid`,
-feedback via `src(o0)`).
-
-p5 runs inside hydra (`p1 = new P5()` → `s0.init({src: p1.canvas})`), which is how a sketch
-gets text, typography and per-object geometry. Every renderer we build has to load p5.
+- `bike/` — the whole thing: prompt, render harness, judge, reward, training loop
+  ([its own README](bike/README.md))
+- `bike/train/` — the three-phase loop: sample → score → update, as separate processes
+- `box/` — rent a GPU, set it up, run, mirror it back ([its own README](box/README.md))
+- `results/` — what survives the boxes: per-run logs, scores, prompts, sample sheets
+- `runs/` — gitignored local mirror, one directory per run
+- `bicycles-judged/` — the first drawings a judge called a bicycle
+- `bitacora-assets/` — images the bitácora references

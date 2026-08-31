@@ -5,9 +5,6 @@ Following <https://surya.website/rling-qwen-to-paint-with-code> (RL'd Qwen to pa
 watercolour hibiscus): same loop — write code, render headlessly, judge the image, reward —
 on a subject where failure is legible, because almost nobody can draw a bicycle from memory.
 
-The project started as a hydra live-coding LoRA; that branch is parked in `corpus/`, and the
-bitácora keeps the whole path including the pivot.
-
 ---
 
 ## RULE 1 — THE BITÁCORA IS THE PRODUCT
@@ -46,18 +43,16 @@ invent a nicer story than the one in the notes.
 
 ## Project layout
 
-**Current target: `bike/`** — a bicycle, side view, ink line drawing, in p5.brush. The hydra
-work below is parked, not deleted; the corpus and the curation wireframe come back if the
-bicycle loop works.
+**The target: `bike/`** — a bicycle, side view, painted in p5.brush.
 
 | Path | What |
 |---|---|
-| `bike/` | The live target: render harness, reference sketches. Own README. |
+| `bike/` | Prompt, render harness, judge, reward. Own README. |
+| `bike/train/` | The loop: `rollout.py` → `score.py` → `update.py`, separate processes. |
 | `BITACORA.md` | Lab notebook → blog post. See Rule 1. |
-| `corpus/` | *Parked.* Hydra sketch harvest + curation wireframe. Own README. |
-| `data/` | Final training pairs `{"prompt", "code"}` (jsonl), exported from `corpus/`. |
-| `train/` | LoRA config + training script. |
-| `eval/` | Headless render of generated sketches, contact-sheet eyeball. |
+| `box/` | Rent a GPU, set it up, run it, mirror it back. Own README. |
+| `results/` | Per-run logs, scores, prompts and sample sheets. Own README. |
+| `runs/` | Gitignored mirror of each run, one directory per run. |
 | `bitacora-assets/` | Images referenced by the bitácora. |
 
 Folders appear when we get to them. Do not scaffold empty ones.
@@ -68,16 +63,9 @@ Folders appear when we get to them. Do not scaffold empty ones.
   pipeline. A new dependency needs a sentence in the bitácora justifying it.
 - **Shortest thing that works.** No abstraction with one caller, no config for a constant.
   Deliberate shortcuts get a `# ponytail:` comment naming the ceiling and the upgrade path.
-- **p5 inside hydra is in scope.** `p1 = new P5()` → `s0.init({src: p1.canvas})` →
-  `src(s0)…out(o0)` is core hydra (the editor ships the wrapper) and it is where the rich
-  sketches live: text, typography, geometry, per-object logic. Anything that renders or
-  evaluates a sketch — the curation preview, the eval harness, the RL sandbox — **must load
-  p5 and define the `P5` wrapper class**, or every p5 sketch fails the compile gate and the
-  model learns to avoid the best half of the language. Extension libraries (hyper-hydra,
-  antlia, HY5) stay out: their API does not exist in vanilla hydra-synth.
-- **Provenance is not optional.** Every harvested sketch keeps `source` (URL) and
-  `license`. Hydra gallery sketches are CC BY-NC-SA 4.0; community repos vary. We are
-  training on other people's art — the blog post has to be able to credit it.
+- **Provenance is not optional.** Every reference photograph keeps its `source` and
+  `license` in `bike/photos/credits.json`. The judge compares drawings against other
+  people's photographs — the blog post has to be able to credit them.
 - **Determinism where it's free.** Sort, seed, and dedupe by content hash so re-running the
   harvest gives the same file.
 - Generated artefacts that are cheap to rebuild stay out of git; the curated corpus goes in.
