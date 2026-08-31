@@ -66,20 +66,28 @@ kept with a `legacy_` prefix.
 
 - **The renders and sketches** — ~2,500 PNG/JS pairs per run, hundreds of MB. The sample
   sheets carry the visual story; individual rollouts live in the local `runs/` mirror.
-- **The LoRA adapters** — 154 MB each, over GitHub's 100 MB per-file limit, so they cannot go
-  in plain git. They are in `runs/<box>/lora/` locally, with the optimiser state beside them.
+- **The LoRA adapters** — 161 MB each, over GitHub's 100 MB per-file limit, so they cannot go
+  in plain git. They live in `runs/run<N>/lora/` locally, with the optimiser state beside them,
+  and are **published on the Hugging Face Hub** — which is where model weights belong, and
+  means a reader can draw their own bicycles rather than take these numbers on trust:
 
-  **TODO, when the project wraps: publish the adapters to the Hugging Face Hub.** That is
-  where model weights belong, it costs nothing, and it means a reader of the post can load
-  run 2's adapter and draw their own bicycles rather than take the numbers on trust. Until
-  then they exist on exactly one disk, which is the real risk here — not the repo size.
+  | run | adapter |
+  |---|---|
+  | 1 | <https://huggingface.co/ESCRI11/bicycle-rl-run1> |
+  | 2 | <https://huggingface.co/ESCRI11/bicycle-rl-run2> |
+  | 3 | <https://huggingface.co/ESCRI11/bicycle-rl-run3> — the one to use |
 
-      huggingface-cli login
-      huggingface-cli upload <user>/bicycle-rl-run2 runs/run2/lora
+  Each carries the base model id (`Qwen/Qwen2.5-Coder-7B-Instruct`), the exact prompt it was
+  trained against, its reward weights, its per-cycle numbers and a 128-sample sheet from the
+  final cycle. An adapter without those is not reproducible.
 
-  Publish with the base model id (`Qwen/Qwen2.5-Coder-7B-Instruct`), the prompt it was
-  trained against (`bike/prompt/system.txt`, v2.1) and the reward weights — an adapter
-  without those three is not reproducible.
+  **They are private until the post is ready.** One call each to open them up:
+
+      from huggingface_hub import HfApi
+      HfApi().update_repo_settings("ESCRI11/bicycle-rl-run3", private=False)
+
+  Not yet uploaded: run 3's intermediate checkpoints (steps 80, 160, 224, 240) — 640 MB, only
+  interesting if someone wants to watch the behaviour appear mid-run.
 
 ## Rebuilding a run's artefacts
 

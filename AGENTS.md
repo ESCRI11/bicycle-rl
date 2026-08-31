@@ -84,10 +84,13 @@ Folders appear when we get to them. Do not scaffold empty ones.
 
 ## Open TODOs
 
-- **Publish the LoRA adapters to the Hugging Face Hub when the project wraps.** 154 MB each,
-  too large for plain git, and currently on one disk only. Ship each with its base model id,
-  the exact prompt it was trained against, and the reward weights — without those three an
-  adapter is not reproducible. Details in `results/README.md`.
+- **Make the Hugging Face adapter repos public when the post goes out.** All three are
+  uploaded at `ESCRI11/bicycle-rl-run{1,2,3}` with prompt, reward weights and sample sheet,
+  but created private — flipping to public is one call, un-publishing something already
+  indexed is not. Command in `results/README.md`.
+- **Write the post.** The bitácora is the raw material; `results/README.md` has the
+  three-run comparison and the arc in one line: each run got exactly what its reward asked
+  for.
 
 ## Working agreements
 
